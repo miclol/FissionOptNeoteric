@@ -11,9 +11,10 @@ namespace Fission {
 
   enum {
     // Cooler
-    Water, Redstone, Quartz, Gold, Glowstone,
-    Lapis, Diamond, Helium, Enderium, Cryotheum,
-    Iron, Emerald, Copper, Tin, Magnesium, Active,
+    Water, Redstone, Helium, Enderium, Cryotheum, Nitrogen, Quartz, Gold,
+    Glowstone, Lapis, Diamond, Iron, Emerald, Copper, Tin, Magnesium,
+    Manganese, EndStone, Arsenic, Prismarine, Obsidian, Aluminium, Villiaumite,
+    Boron, Silver, Fluorite, NetherBrick, Lead, Purpur, Slime, Lithium, Active,
     // Other
     Cell = Active * 2, Moderator, Air
   };
@@ -29,10 +30,13 @@ namespace Fission {
     double fuelBasePower, fuelBaseHeat;
     int limit[Air];
     double coolingRates[Cell];
-    bool ensureActiveCoolerAccessible;
     bool ensureHeatNeutral;
     int goal;
     bool symX, symY, symZ;
+    double temperature;
+    bool altCalc, activeHeatsinkPrime;
+    double generationMultiplier, heatCapacity, heatMultiplier, heatMultiplierCap,
+    moderatorFEMultiplier, moderatorHeatMultiplier, FEGenerationMultiplier;
   };
 
   struct Evaluation {
@@ -62,8 +66,6 @@ namespace Fission {
     bool isTileSafe(int tile, int x, int y, int z) const;
     int countNeighbors(int tile, int x, int y, int z) const;
     int countCasingNeighbors(int x, int y, int z) const;
-    bool checkAccessibility(int compatibleTile, int x, int y, int z);
-    bool checkAccessibility(int x, int y, int z);
   public:
     Evaluator(const Settings &settings);
     void run(const xt::xtensor<int, 3> &state, Evaluation &result);

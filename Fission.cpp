@@ -102,30 +102,6 @@ namespace Fission {
       + !state->in_bounds(x, y, z + 1);
   }
 
-  bool Evaluator::checkAccessibility(int compatibleTile, int x, int y, int z) {
-    visited.fill(false);
-    this->compatibleTile = compatibleTile;
-    return checkAccessibility(x, y, z);
-  }
-
-  bool Evaluator::checkAccessibility(int x, int y, int z) {
-    if (!state->in_bounds(x, y, z))
-      return true;
-    if (visited(x, y, z))
-      return false;
-    visited(x, y, z) = true;
-    int tile((*state)(x, y, z));
-    if (tile != Air && tile != compatibleTile)
-      return false;
-    return
-      checkAccessibility(x - 1, y, z) ||
-      checkAccessibility(x + 1, y, z) ||
-      checkAccessibility(x, y - 1, z) ||
-      checkAccessibility(x, y + 1, z) ||
-      checkAccessibility(x, y, z - 1) ||
-      checkAccessibility(x, y, z + 1);
-  }
-
   void Evaluator::run(const xt::xtensor<int, 3> &state, Evaluation &result) {
     result.invalidTiles.clear();
     result.powerMult = 0.0;
@@ -151,11 +127,7 @@ namespace Fission {
             if (tile < Active) {
               rules(x, y, z) = tile;
             } else if (tile < Cell) {
-              if (settings.ensureActiveCoolerAccessible && !checkAccessibility(tile, x, y, z)) {
-                rules(x, y, z) = -1;
-              } else {
-                rules(x, y, z) = tile - Active;
-              }
+              rules(x, y, z) = tile - Active;
             } else {
               rules(x, y, z) = -1;
             }

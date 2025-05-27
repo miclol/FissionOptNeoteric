@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>NuclearCraft Fission Reactor Design Generator</title>
+    <title>NuclearCraft: Neoteric Fission Reactor Design Generator</title>
     <link rel="stylesheet" href="main.css"/>
     <script src="https://code.jquery.com/jquery-3.5.0.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
@@ -12,13 +12,12 @@
   <body>
     <header>
       <div>
-        <h2>NuclearCraft Fission Reactor Design Generator</h2>
-        by cyb0124, <a href="https://github.com/cyb0124/FissionOpt">source</a>
+        <h2>NuclearCraft: Neoteric Fission Reactor Design Generator</h2>
+        by cyb0124 (modified by miclol), <a href="https://github.com/cyb0124/FissionOpt">source</a>
       </div>
       <div>
-        This tool generates a fission reactor design that maximizes effective power output, breeding speed or efficiency.
-        This page is for the pre-overhaul NuclearCraft version used by many popular modpacks.
-        For the post-overhaul version of NuclearCraft, click <a href="/overhaul.html">here</a>.
+        This tool generates a fission reactor design that maximizes effective power output, breeding speed or efficiency. This page is for
+        NuclearCraft: Neoteric <b>&geq;v1.1.2</b>. For the original version of NuclearCraft, click <a href="https://leu-235.com/">here</a>.
       </div>
     </header>
     <section id="settings">
@@ -29,237 +28,109 @@
         <input type="text" id="sizeY">
       </div>
       <div>
-        <b>Step 2</b>: Click on the fuel you want to use in the table below. Most modpacks use the default config, except for E2E and PO3.
-        Alternatively, you can manually enter the fuel data in the textboxes below.
-        The fuel data can be found in the tooltip of the fuel item. Do not use the data shown in JEI, they may be incorrect.
-        You can also use IC2 and ExtremeReactors' fuels. See below the table for more details.
+        <b>Step 2</b>: Click on the fuel you want to use in the table below. Alternatively, you can manually enter the fuel data in the textboxes below.
       </div>
-      <div>Fuel Base Power: <input type="text" id="fuelBasePower"> RF/t</div>
+      <div>Fuel Base Power: <input type="text" id="fuelBasePower"> FE/t</div>
       <div>Fuel Base Heat: <input text="text" id="fuelBaseHeat"> H/t</div>
-      <div class="fuelPresets"><table>
+      <div class="tables"><table>
         <thead><tr><td>Config</td>
-          <td>Uranium Ingot</td>
-          <td>TBU</td>
-          <td>LEU-235</td>
-          <td>HEU-235</td>
-          <td>LEU-233</td>
-          <td>HEU-233</td>
-          <td>LEN-236</td>
-          <td>HEN-236</td>
-          <td>MOX-239</td>
-          <td>MOX-241</td>
-          <td>LEP-239</td>
-          <td>HEP-239</td>
-          <td>LEP-241</td>
-          <td>HEP-241</td>
-          <td>LEA-242</td>
-          <td>HEA-242</td>
-          <td>LECm-243</td>
-          <td>HECm-243</td>
-          <td>LECm-245</td>
-          <td>HECm-245</td>
-          <td>LECm-247</td>
-          <td>HECm-247</td>
-          <td>LEB-248</td>
-          <td>HEB-248</td>
-          <td>LECf-249</td>
-          <td>HECf-249</td>
-          <td>LECf-251</td>
-          <td>HECf-251</td>
+          <td>TBU</td><td>LEU-235</td><td>HEU-235</td><td>LEU-233</td>
+          <td>HEU-233</td><td>LEN-236</td><td>HEN-236</td><td>MIX-239</td>
+          <td>MIX-241</td><td>LEP-239</td><td>HEP-239</td><td>LEP-241</td>
+          <td>HEP-241</td><td>LEA-242</td><td>HEA-242</td><td>LECm-243</td>
+          <td>HECm-243</td><td>LECm-245</td><td>HECm-245</td><td>LECm-247</td>
+          <td>HECm-247</td><td>LEB-248</td><td>HEB-248</td><td>LECf-249</td>
+          <td>HECf-249</td><td>LECf-251</td><td>HECf-251</td>
         </tr></thead>
         <tr><th>Default</th>
-          <td>&mdash;</td>
-          <td><a href="javascript:;" id="DefTBU">Normal</a>
-          <br><a href="javascript:;" id="DefTBUO">Oxide</a></td>
-          <td><a href="javascript:;" id="DefLEU235">Normal</a>
-          <br><a href="javascript:;" id="DefLEU235O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefHEU235">Normal</a>
-          <br><a href="javascript:;" id="DefHEU235O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefLEU233">Normal</a>
-          <br><a href="javascript:;" id="DefLEU233O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefHEU233">Normal</a>
-          <br><a href="javascript:;" id="DefHEU233O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefLEN236">Normal</a>
-          <br><a href="javascript:;" id="DefLEN236O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefHEN236">Normal</a>
-          <br><a href="javascript:;" id="DefHEN236O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefMOX239">Load</a></td>
-          <td><a href="javascript:;" id="DefMOX241">Load</a></td>
-          <td><a href="javascript:;" id="DefLEP239">Normal</a>
-          <br><a href="javascript:;" id="DefLEP239O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefHEP239">Normal</a>
-          <br><a href="javascript:;" id="DefHEP239O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefLEP241">Normal</a>
-          <br><a href="javascript:;" id="DefLEP241O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefHEP241">Normal</a>
-          <br><a href="javascript:;" id="DefHEP241O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefLEA242">Normal</a>
-          <br><a href="javascript:;" id="DefLEA242O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefHEA242">Normal</a>
-          <br><a href="javascript:;" id="DefHEA242O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefLECm243">Normal</a>
-          <br><a href="javascript:;" id="DefLECm243O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefHECm243">Normal</a>
-          <br><a href="javascript:;" id="DefHECm243O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefLECm245">Normal</a>
-          <br><a href="javascript:;" id="DefLECm245O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefHECm245">Normal</a>
-          <br><a href="javascript:;" id="DefHECm245O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefLECm247">Normal</a>
-          <br><a href="javascript:;" id="DefLECm247O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefHECm247">Normal</a>
-          <br><a href="javascript:;" id="DefHECm247O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefLEB248">Normal</a>
-          <br><a href="javascript:;" id="DefLEB248O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefHEB248">Normal</a>
-          <br><a href="javascript:;" id="DefHEB248O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefLECf249">Normal</a>
-          <br><a href="javascript:;" id="DefLECf249O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefHECf249">Normal</a>
-          <br><a href="javascript:;" id="DefHECf249O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefLECf251">Normal</a>
-          <br><a href="javascript:;" id="DefLECf251O">Oxide</a></td>
-          <td><a href="javascript:;" id="DefHECf251">Normal</a>
-          <br><a href="javascript:;" id="DefHECf251O">Oxide</a></td>
-        </tr>
-        <tr><th>E2E</th>
-          <td><a href="javascript:;" id="E2EUraniumIngot">Load</a></td>
-          <td><a href="javascript:;" id="E2ETBU">Normal</a>
-          <br><a href="javascript:;" id="E2ETBUO">Oxide</a></td>
-          <td><a href="javascript:;" id="E2ELEU235">Normal</a>
-          <br><a href="javascript:;" id="E2ELEU235O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2EHEU235">Normal</a>
-          <br><a href="javascript:;" id="E2EHEU235O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2ELEU233">Normal</a>
-          <br><a href="javascript:;" id="E2ELEU233O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2EHEU233">Normal</a>
-          <br><a href="javascript:;" id="E2EHEU233O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2ELEN236">Normal</a>
-          <br><a href="javascript:;" id="E2ELEN236O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2EHEN236">Normal</a>
-          <br><a href="javascript:;" id="E2EHEN236O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2EMOX239">Load</a></td>
-          <td><a href="javascript:;" id="E2EMOX241">Load</a></td>
-          <td><a href="javascript:;" id="E2ELEP239">Normal</a>
-          <br><a href="javascript:;" id="E2ELEP239O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2EHEP239">Normal</a>
-          <br><a href="javascript:;" id="E2EHEP239O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2ELEP241">Normal</a>
-          <br><a href="javascript:;" id="E2ELEP241O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2EHEP241">Normal</a>
-          <br><a href="javascript:;" id="E2EHEP241O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2ELEA242">Normal</a>
-          <br><a href="javascript:;" id="E2ELEA242O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2EHEA242">Normal</a>
-          <br><a href="javascript:;" id="E2EHEA242O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2ELECm243">Normal</a>
-          <br><a href="javascript:;" id="E2ELECm243O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2EHECm243">Normal</a>
-          <br><a href="javascript:;" id="E2EHECm243O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2ELECm245">Normal</a>
-          <br><a href="javascript:;" id="E2ELECm245O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2EHECm245">Normal</a>
-          <br><a href="javascript:;" id="E2EHECm245O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2ELECm247">Normal</a>
-          <br><a href="javascript:;" id="E2ELECm247O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2EHECm247">Normal</a>
-          <br><a href="javascript:;" id="E2EHECm247O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2ELEB248">Normal</a>
-          <br><a href="javascript:;" id="E2ELEB248O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2EHEB248">Normal</a>
-          <br><a href="javascript:;" id="E2EHEB248O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2ELECf249">Normal</a>
-          <br><a href="javascript:;" id="E2ELECf249O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2EHECf249">Normal</a>
-          <br><a href="javascript:;" id="E2EHECf249O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2ELECf251">Normal</a>
-          <br><a href="javascript:;" id="E2ELECf251O">Oxide</a></td>
-          <td><a href="javascript:;" id="E2EHECf251">Normal</a>
-          <br><a href="javascript:;" id="E2EHECf251O">Oxide</a></td>
-        </tr>
-        <tr><th>PO3</th>
-          <td>&mdash;</td>
-          <td><a href="javascript:;" id="PO3TBU">Normal</a>
-          <br><a href="javascript:;" id="PO3TBUO">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3LEU235">Normal</a>
-          <br><a href="javascript:;" id="PO3LEU235O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3HEU235">Normal</a>
-          <br><a href="javascript:;" id="PO3HEU235O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3LEU233">Normal</a>
-          <br><a href="javascript:;" id="PO3LEU233O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3HEU233">Normal</a>
-          <br><a href="javascript:;" id="PO3HEU233O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3LEN236">Normal</a>
-          <br><a href="javascript:;" id="PO3LEN236O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3HEN236">Normal</a>
-          <br><a href="javascript:;" id="PO3HEN236O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3MOX239">Load</a></td>
-          <td><a href="javascript:;" id="PO3MOX241">Load</a></td>
-          <td><a href="javascript:;" id="PO3LEP239">Normal</a>
-          <br><a href="javascript:;" id="PO3LEP239O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3HEP239">Normal</a>
-          <br><a href="javascript:;" id="PO3HEP239O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3LEP241">Normal</a>
-          <br><a href="javascript:;" id="PO3LEP241O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3HEP241">Normal</a>
-          <br><a href="javascript:;" id="PO3HEP241O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3LEA242">Normal</a>
-          <br><a href="javascript:;" id="PO3LEA242O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3HEA242">Normal</a>
-          <br><a href="javascript:;" id="PO3HEA242O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3LECm243">Normal</a>
-          <br><a href="javascript:;" id="PO3LECm243O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3HECm243">Normal</a>
-          <br><a href="javascript:;" id="PO3HECm243O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3LECm245">Normal</a>
-          <br><a href="javascript:;" id="PO3LECm245O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3HECm245">Normal</a>
-          <br><a href="javascript:;" id="PO3HECm245O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3LECm247">Normal</a>
-          <br><a href="javascript:;" id="PO3LECm247O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3HECm247">Normal</a>
-          <br><a href="javascript:;" id="PO3HECm247O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3LEB248">Normal</a>
-          <br><a href="javascript:;" id="PO3LEB248O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3HEB248">Normal</a>
-          <br><a href="javascript:;" id="PO3HEB248O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3LECf249">Normal</a>
-          <br><a href="javascript:;" id="PO3LECf249O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3HECf249">Normal</a>
-          <br><a href="javascript:;" id="PO3HECf249O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3LECf251">Normal</a>
-          <br><a href="javascript:;" id="PO3LECf251O">Oxide</a></td>
-          <td><a href="javascript:;" id="PO3HECf251">Normal</a>
-          <br><a href="javascript:;" id="PO3HECf251O">Oxide</a></td>
+          <td><a href="javascript:;" id="DefTBU">Normal</a><br><a href="javascript:;" id="DefTBUO">OX</a>
+          <a href="javascript:;" id="DefTBUN">NI</a> <a href="javascript:;" id="DefTBUZ">ZA</a></td>
+          <td><a href="javascript:;" id="DefLEU235">Normal</a><br><a href="javascript:;" id="DefLEU235O">OX</a>
+          <a href="javascript:;" id="DefLEU235N">NI</a> <a href="javascript:;" id="DefLEU235Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefHEU235">Normal</a><br><a href="javascript:;" id="DefHEU235O">OX</a> 
+          <a href="javascript:;" id="DefHEU235N">NI</a> <a href="javascript:;" id="DefHEU235Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefLEU233">Normal</a><br><a href="javascript:;" id="DefLEU233O">OX</a>
+          <a href="javascript:;" id="DefLEU233N">NI</a> <a href="javascript:;" id="DefLEU233Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefHEU233">Normal</a><br><a href="javascript:;" id="DefHEU233O">OX</a>
+          <a href="javascript:;" id="DefHEU233N">NI</a> <a href="javascript:;" id="DefHEU233Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefLEN236">Normal</a><br><a href="javascript:;" id="DefLEN236O">OX</a>
+          <a href="javascript:;" id="DefLEN236N">NI</a> <a href="javascript:;" id="DefLEN236Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefHEN236">Normal</a><br><a href="javascript:;" id="DefHEN236O">OX</a>
+          <a href="javascript:;" id="DefHEN236N">NI</a> <a href="javascript:;" id="DefHEN236Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefMIX239">Normal</a><br><a href="javascript:;" id="DefMIX239O">OX</a>
+          <a href="javascript:;" id="DefMIX239N">NI</a> <a href="javascript:;" id="DefMIX239Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefMIX241">Normal</a><br><a href="javascript:;" id="DefMIX241O">OX</a>
+          <a href="javascript:;" id="DefMIX241N">NI</a> <a href="javascript:;" id="DefMIX241Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefLEP239">Normal</a><br><a href="javascript:;" id="DefLEP239O">OX</a>
+          <a href="javascript:;" id="DefLEP239N">NI</a> <a href="javascript:;" id="DefLEP239Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefHEP239">Normal</a><br><a href="javascript:;" id="DefHEP239O">OX</a>
+          <a href="javascript:;" id="DefHEP239N">NI</a> <a href="javascript:;" id="DefHEP239Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefLEP241">Normal</a><br><a href="javascript:;" id="DefLEP241O">OX</a>
+          <a href="javascript:;" id="DefLEP241N">NI</a> <a href="javascript:;" id="DefLEP241Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefHEP241">Normal</a><br><a href="javascript:;" id="DefHEP241O">OX</a>
+          <a href="javascript:;" id="DefHEP241N">NI</a> <a href="javascript:;" id="DefHEP241Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefLEA242">Normal</a><br><a href="javascript:;" id="DefLEA242O">OX</a>
+          <a href="javascript:;" id="DefLEA242N">NI</a> <a href="javascript:;" id="DefLEA242Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefHEA242">Normal</a><br><a href="javascript:;" id="DefHEA242O">OX</a>
+          <a href="javascript:;" id="DefHEA242N">NI</a> <a href="javascript:;" id="DefHEA242Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefLECm243">Normal</a><br><a href="javascript:;" id="DefLECm243O">OX</a>
+          <a href="javascript:;" id="DefLECm243N">NI</a> <a href="javascript:;" id="DefLECm243Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefHECm243">Normal</a><br><a href="javascript:;" id="DefHECm243O">OX</a>
+          <a href="javascript:;" id="DefHECm243N">NI</a> <a href="javascript:;" id="DefHECm243Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefLECm245">Normal</a><br><a href="javascript:;" id="DefLECm245O">OX</a>
+          <a href="javascript:;" id="DefLECm245N">NI</a> <a href="javascript:;" id="DefLECm245Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefHECm245">Normal</a><br><a href="javascript:;" id="DefHECm245O">OX</a>
+          <a href="javascript:;" id="DefHECm245N">NI</a> <a href="javascript:;" id="DefHECm245Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefLECm247">Normal</a><br><a href="javascript:;" id="DefLECm247O">OX</a>
+          <a href="javascript:;" id="DefLECm247N">NI</a> <a href="javascript:;" id="DefLECm247Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefHECm247">Normal</a><br><a href="javascript:;" id="DefHECm247O">OX</a>
+          <a href="javascript:;" id="DefHECm247N">NI</a> <a href="javascript:;" id="DefHECm247Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefLEB248">Normal</a><br><a href="javascript:;" id="DefLEB248O">OX</a>
+          <a href="javascript:;" id="DefLEB248N">NI</a> <a href="javascript:;" id="DefLEB248Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefHEB248">Normal</a><br><a href="javascript:;" id="DefHEB248O">OX</a>
+          <a href="javascript:;" id="DefHEB248N">NI</a> <a href="javascript:;" id="DefHEB248Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefLECf249">Normal</a><br><a href="javascript:;" id="DefLECf249O">OX</a>
+          <a href="javascript:;" id="DefLECf249N">NI</a> <a href="javascript:;" id="DefLECf249Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefHECf249">Normal</a><br><a href="javascript:;" id="DefHECf249O">OX</a>
+          <a href="javascript:;" id="DefHECf249N">NI</a> <a href="javascript:;" id="DefHECf249Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefLECf251">Normal</a><br><a href="javascript:;" id="DefLECf251O">OX</a>
+          <a href="javascript:;" id="DefLECf251N">NI</a> <a href="javascript:;" id="DefLECf251Z">ZA</a></td>
+          <td><a href="javascript:;" id="DefHECf251">Normal</a><br><a href="javascript:;" id="DefHECf251O">OX</a>
+          <a href="javascript:;" id="DefHECf251N">NI</a> <a href="javascript:;" id="DefHECf251Z">ZA</a></td>
         </tr>
       </table></div>
       <div>
-        For ExtremeReactors' Yellorium or Blutonium, click LEU-235 Normal and then click <a href="javascript:;" id="br">here</a> once.<br>
-        For IC2's Enriched Uranium Nuclear Fuel, click LEU-235 Normal and then click <a href="javascript:;" id="ic2">here</a> once.<br>
-        For IC2's MOX Nuclear Fuel, click MOX-239 and then click <a href="javascript:;" id="ic2mox">here</a> once.
-      </div>
-      <div>
         <b>Step 3</b>: If you want to limit the usage of a type of block, enter the maximum number allowed in the table below.
         Enter zero to completely disable that block. You can hover over the acronym to see the full name of each block.
-        Active coolers are disabled by default. You can enable them by removing the zeros.
+        Active coolers are disabled by default. You can enable them by removing the zeros. <b><i>NOTE: Irradiators are not supported.</i></b>
       </div>
-      <table>
+      <div class="tables"><table>
         <thead><tr id="blockType"><th>Block Type</th>
-          <th class="Wt">Wt</th><th class="Rs">Rs</th><th class="Qz">Qz</th>
-          <th class="Au">Au</th><th class="Gs">Gs</th><th class="Lp">Lp</th>
-          <th class="Dm">Dm</th><th class="He">He</th><th class="Ed">Ed</th>
-          <th class="Cr">Cr</th><th class="Fe">Fe</th><th class="Em">Em</th>
-          <th class="Cu">Cu</th><th class="Sn">Sn</th><th class="Mg">Mg</th>
-          <th class="cell">[]</th><th class="mod">##</th>
+          <th class="Wt">Wt</th><th class="Rs">Rs</th><th class="He">He</th>
+          <th class="Ed">Ed</th><th class="Cr">Cr</th><th class="N">N</th>
+          <th class="Qz">Qz</th><th class="Au">Au</th><th class="Gs">Gs</th>
+          <th class="Lp">Lp</th><th class="Dm">Dm</th><th class="Fe">Fe</th>
+          <th class="Em">Em</th><th class="Cu">Cu</th><th class="Sn">Sn</th>
+          <th class="Mg">Mg</th><th class="Mn">Mn</th><th class="En">En</th>
+          <th class="As">As</th><th class="Pm">Pm</th><th class="Ob">Ob</th>
+          <th class="Al">Al</th><th class="Vi">Vi</th><th class="B">B</th>
+          <th class="Ag">Ag</th><th class="Fl">Fl</th><th class="Nr">Nr</th>
+          <th class="Pb">Pb</th><th class="Pr">Pr</th><th class="Sm">Sm</th>
+          <th class="Li">Li</th><th class="cell">[]</th><th class="mod">##</th>
         </tr></thead>
         <tbody>
           <tr id="rate"><th>Cooling Rate (H/t)</th>
-            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-            <td>&mdash;</td><td>&mdash;</td>
+            <td><input type="text" value="60"></td><td><input type="text" value="90"></td><td><input type="text" value="140"></td>
+            <td><input type="text" value="120"></td><td><input type="text" value="160"></td><td><input type="text" value="185"></td>
+            <td><input type="text" value="90"></td><td><input type="text" value="120"></td><td><input type="text" value="130"></td>
+            <td><input type="text" value="120"></td><td><input type="text" value="150"></td><td><input type="text" value="80"></td>
+            <td><input type="text" value="160"></td><td><input type="text" value="80"></td><td><input type="text" value="120"></td>
+            <td><input type="text" value="110"></td><td><input type="text" value="150"></td><td><input type="text" value="40"></td>
+            <td><input type="text" value="135"></td><td><input type="text" value="115"></td><td><input type="text" value="40"></td>
+            <td><input type="text" value="175"></td><td><input type="text" value="180"></td><td><input type="text" value="160"></td>
+            <td><input type="text" value="170"></td><td><input type="text" value="160"></td><td><input type="text" value="70"></td>
+            <td><input type="text" value="60"></td><td><input type="text" value="95"></td><td><input type="text" value="145"></td>
+            <td><input type="text" value="130"></td><td>&mdash;</td><td>&mdash;</td>
           </tr>
           <tr id="limit"><th>Max Allowed</th>
             <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
@@ -267,15 +138,25 @@
             <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
             <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
             <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-            <td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
           </tr>
           <tr id="activeRate"><th>Active Rate (H/t)</th>
-            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
-            <td>&mdash;</td><td>&mdash;</td>
+            <td><input type="text" value="150"></td><td><input type="text" value="270"></td><td><input type="text" value="420"></td>
+            <td><input type="text" value="360"></td><td><input type="text" value="480"></td><td><input type="text" value="555"></td>
+            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
+            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
+            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
+            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
+            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
+            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
+            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
+            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
+            <td><input type="text" value="0"><td>&mdash;</td><td>&mdash;</td>
           </tr>
           <tr id="activeLimit"><th>Max Active Allowed</th>
             <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
@@ -283,20 +164,67 @@
             <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
             <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
             <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
-            <td>&mdash;</td><td>&mdash;</td>
+            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
+            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
+            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
+            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
+            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
+            <td><input type="text" value="0"><td>&mdash;</td><td>&mdash;</td>
           </tr>
         </tbody>
-      </table>
+      </table></div>
       <div>
-        <b>Step 4</b>: Load the cooling rate data by clicking on one of the following modpack configs:
-        <a href="javascript:;" id="DefRate">Default</a>
-        <a href="javascript:;" id="E2ERate">E2E</a>
-        <a href="javascript:;" id="PO3Rate">PO3</a>. Alternatively, you can enter the data yourself.
-        Passive cooling rates are in the tooltip of each cooler item. Active cooling rates are in JEI.
+        <b>Step 4</b>: If you want the generator to factor in the biome you are building this in, select the biome from the dropdown menu below.
+        Otherwise, leave the dropdown and textbox as is. Alternatively, you can manually enter the biome temperature in the textbox below.
+      </div>
+      <div>Biome Temperature: <input type="text" id="temperature" value="2"></div>
+      <select id="temperatureList">
+        <option value="2">Select Biome:</option>
+        <optgroup label="Overworld">
+          <option value="2">Badlands</option><option value="0.95">Bamboo Jungle</option><option value="0.8">Beach</option>
+          <option value="0.6">Birch Forest</option><option value="0.5">Cherry Grove</option><option value="0.5">Cold Ocean</option>
+          <option value="0.7">Dark Forest</option><option value="0.5">Deep Cold Ocean</option><option value="0.8">Deep Dark</option>
+          <option value="0.5">Deep Frozen Ocean</option><option value="0.5">Deep Lukewarm Ocean</option><option value="0.5">Deep Ocean</option>
+          <option value="2">Desert</option><option value="0.8">Dripstone Caves</option><option value="2">Eroded Badlands</option>
+          <option value="0.7">Flower Forest</option><option value="0.7">Forest</option><option value="0">Frozen Ocean</option>
+          <option value="-0.7">Frozen Peaks</option><option value="0">Frozen River</option><option value="-0.2">Grove</option>
+          <option value="0">Ice Spikes</option><option value="-0.7">Jagged Peaks</option><option value="0.95">Jungle</option>
+          <option value="0.5">Lukewarm Ocean</option><option value="0.5">Lush Caves</option><option value="0.8">Mangrove Swamp</option>
+          <option value="0.5">Meadow</option><option value="0.9">Mushroom Fields</option><option value="0.5">Ocean</option>
+          <option value="0.6">Old Growth Birch Forest</option><option value="0.3">Old Growth Pine Taiga</option>
+          <option value="0.25">Old Growth Spruce Taiga</option><option value="0.8">Plains</option><option value="0.5">River</option>
+          <option value="2">Savanna Plateau</option><option value="2">Savanna</option><option value="0.05">Snowy Beach</option>
+          <option value="0">Snowy Plains</option><option value="-0.3">Snowy Slopes</option><option value="-0.5">Snowy Taiga</option>
+          <option value="0.95">Sparse Jungle</option><option value="1">Stony Peaks</option><option value="0.2">Stony Shore</option>
+          <option value="0.8">Sunflower Plains</option><option value="0.8">Swamp</option><option value="0.25">Taiga</option>
+          <option value="0.5">Warm Ocean</option><option value="0.2">Windswept Forest</option><option value="0.2">Windswept Gravelly Hills</option>
+          <option value="0.2">Windswept Hills</option><option value="2">Windswept Savanna</option><option value="2">Wooded Badlands</option>
+        </optgroup>
+        <optgroup label="The Void">
+          <option value="0.5">The Void</option>
+        </optgroup>
+        <optgroup label="The Nether">
+          <option value="2">Any Nether Biome</option>
+        </optgroup>
+        <optgroup label="The End">
+          <option value="0.5">Any End Biome</option>
+        </optgroup>
+      </select>
+      <div class="configs">
+        <b>Step 5</b>: Adjust these settings to match whatever modpack you are using, or leave them as default. All
+        config values can be found in either <i>common.toml</i> or <i>fission.toml</i> in the NuclearCraft config.<br>
+        <label><input type="checkbox" id="altCalc">Nuclearcraft: Neoteric &geq;v.1.2.1</label>
+        <div>Generation Multiplier: <input type="text" id="generationMultiplier" value="1"></div>
+        <div>Heat Capacity: <input type="text" id="heatCapacity" value="1000000"></div>
+        <div>Heat Multiplier: <input type="text" id="heatMultiplier" value="1"></div>
+        <div>Heat Multiplier Cap: <input type="text" id="heatMultiplierCap" value="3"></div>
+        <div>Moderator FE Multiplier: <input type="text" id="moderatorFEMultiplier" value="16.67"></div>
+        <div>Moderator Heat Multiplier: <input type="text" id="moderatorHeatMultiplier" value="33.34"></div>
+        <div>FE Generation Multiplier: <input type="text" id="FEGenerationMultiplier" value="10"></div>
+        <label><input type="checkbox" id="activeHeatsinkPrime" checked>Active Heatsink Prime</label>
       </div>
       <div>
-        <b>Step 5</b>: Adjust the options below and click &ldquo;Run&rdquo; to start the optimization.<br>
-        <label><input type="checkbox" id="ensureActiveCoolerAccessible" checked>Ensure active coolers are accessible by piping.</label><br>
+        <b>Step 6</b>: Adjust the options below and click &ldquo;Run&rdquo; to start the optimization.<br>
         <label><input type="checkbox" id="ensureHeatNeutral" checked>Only generate heat neutral reactor.</label><br>
         <label><input type="radio" name="goal" value="0" checked>Optimize for power.</label><br>
         <label><input type="radio" name="goal" value="1">Optimize for breeding (maximize fuel consumption rate).</label><br>

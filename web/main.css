@@ -8,6 +8,11 @@ table {
   white-space: nowrap;
 }
 
+td:first-child, th:first-child {
+  left: 0;
+  position: sticky;
+} 
+
 td, th {
   text-align: center;
   font-weight: normal;
@@ -25,7 +30,7 @@ input {
 }
 
 #settings>*, main>* {
-  margin-top: 0.3em;
+  margin-top: 0.5em;
 }
 
 .disabledLink {
@@ -41,7 +46,7 @@ input {
   width: 8.5ch;
 }
 
-.fuelPresets {
+.tables {
   overflow-x: auto;
 }
 
@@ -57,22 +62,46 @@ input {
 
 .Wt {color: dodgerblue;}
 .Rs {color: red;}
+.He {color: lightcoral;}
+.Ed {color: teal;}
+.Cr {color: deepskyBlue;}
 .Qz {color: lightgray;}
 .Au {color: gold;}
 .Gs {color: #dc0;}
 .Lp {color: blue;}
 .Dm {color: powderblue;}
-.He {color: lightcoral;}
-.Ed {color: teal;}
-.Cr {color: deepskyBlue;}
 .Fe {color: wheat;}
 .Em {color: green;}
 .Cu {color: brown;}
 .Sn {color: lightsteelblue;}
 .Mg {color: pink;}
+.Mn {color: #aaafcc;}
+.En {color: #ecf8b4;}
+.As {color: #8f9284;}
+.Pm {color: mediumaquamarine;}
+.Ob {color: indigo;}
+.Al {color: #d4f4e9;}
+.Vi {color: #9a7161;}
+.B  {color: silver;}
+.Ag {color: mistyrose;}
+.Fl {color: #8dae99;}
+.Nr {color: maroon;}
+.Pb {color: darkslategray;}
+.Pr {color: mediumorchid;}
+.Sm {color: lightgreen;}
+.Li {color: lavender;}
+.N  {color: #42a649;}
 .air {color: white;}
 .cell {color: gray;}
 .mod {color: black;}
+
+#temperature {
+  width: 4.5ch;
+}
+
+.configs input[type="text"] {
+  width: 11ch;
+}
 
 #design>* {
   float: left;
