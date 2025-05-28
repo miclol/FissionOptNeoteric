@@ -63,7 +63,7 @@ namespace Fission {
   bool Evaluator::isActiveSafe(int tile, int x, int y, int z) const {
     if (!state->in_bounds(x, y, z))
       return false;
-    return (*state)(x, y, z) == tile && isActive(x, y, z);
+    return (*state)(x, y, z) == tile && isActive(x, y, z) && (tile < Active || settings.activeHeatsinkPrime);
   }
 
   int Evaluator::countActiveNeighbors(int tile, int x, int y, int z) const {

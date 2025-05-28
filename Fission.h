@@ -35,8 +35,8 @@ namespace Fission {
     bool symX, symY, symZ;
     double temperature;
     bool altCalc, activeHeatsinkPrime;
-    double generationMultiplier, heatCapacity, heatMultiplier, heatMultiplierCap,
-    moderatorFEMultiplier, moderatorHeatMultiplier, FEGenerationMultiplier;
+    double genMult, heatCap, heatMult, heatMultCap,
+    modFEMult, modHeatMult, FEGenMult;
   };
 
   struct Evaluation {
