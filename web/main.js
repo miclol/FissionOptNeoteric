@@ -238,7 +238,6 @@ $(() => { FissionOpt().then((FissionOpt) => {
       InteriorDimensions: {X: shapes[2], Y: shapes[0], Z: shapes[1]},
       CompressedReactor: {}
     };
-    console.log(shapes, strides, data);
     resourceMap[-1] = (shapes[0] * shapes[1] + shapes[1] * shapes[2] + shapes[2] * shapes[0]) * 2 + (shapes[0] + shapes[1] + shapes[2]) * 4 + 8;
     for (let x = 0; x < shapes[0]; ++x) {
       block = $('<div></div>');

@@ -5,12 +5,12 @@ namespace Fission {
   void Evaluation::compute(const Settings &settings) {
     double moderatorsFE = settings.fuelBasePower * moderatorCellMultiplier * settings.modFEMult / 100.0;
     double moderatorsHeat = settings.fuelBaseHeat * moderatorCellMultiplier * settings.modHeatMult / 100.0;
-    double coolingPerTick = cooling - 1.0 / std::max(0.01, settings.temperature);
+    cooling += 1.0 / std::max(0.01, settings.temperature);
     heat = settings.fuelBaseHeat * std::max(breed, fuelCellMultiplier) + moderatorsHeat;
-    netHeat = heat - coolingPerTick;
+    netHeat = heat - cooling;
     dutyCycle = std::min(1.0, cooling / heat);
     power = trunc((settings.fuelBasePower * abs(fuelCellMultiplier - breed) + moderatorsFE) *
-    heatMultiplier(heat, coolingPerTick, settings.heatMult) * settings.FEGenMult / 10.0 * settings.genMult);
+    heatMultiplier(heat, cooling, settings.heatMult) * settings.FEGenMult / 10.0 * settings.genMult);
     avgPower = power * dutyCycle;
     avgBreed = breed * dutyCycle;
     double mult = fuelCellMultiplier > breed ? 1.0 * fuelCellMultiplier / breed : breed; // Silly double cast
@@ -18,6 +18,9 @@ namespace Fission {
   }
 
   double Evaluation::heatMultiplier(double heatPerTick, double coolingPerTick, double heatMult) {
+    if (heatPerTick == 0.0) {
+      return 0.0;
+    }
     double c = std::max(1.0, coolingPerTick);
     return std::log10(heatPerTick / c) / (1 + std::exp(heatPerTick / c * heatMult)) + 1;
   }
