@@ -43,7 +43,7 @@ namespace Fission {
     double cooling;
     int breed, fuelCellMultiplier, moderatorCellMultiplier;
     // Computed
-    double heat, netHeat, dutyCycle, avgMult, power, avgPower, avgBreed, efficiency;
+    double heat, netHeat, dutyCycle, power, avgPower, avgBreed, efficiency;
 
     void compute(const Settings &settings);
     double heatMultiplier(double heatPerTick, double coolingPerTick, double heatMult);

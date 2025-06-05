@@ -9,7 +9,6 @@ namespace Fission {
     heat = settings.fuelBaseHeat * std::max(breed, fuelCellMultiplier) + moderatorsHeat;
     netHeat = heat - coolingPerTick;
     dutyCycle = std::min(1.0, cooling / heat);
-    avgMult = fuelCellMultiplier * dutyCycle;
     power = trunc((settings.fuelBasePower * abs(fuelCellMultiplier - breed) + moderatorsFE) *
     heatMultiplier(heat, coolingPerTick, settings.heatMult) * settings.FEGenMult / 10.0 * settings.genMult);
     avgPower = power * dutyCycle;

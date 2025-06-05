@@ -51,7 +51,7 @@ namespace Fission {
   double Opt::rawFitness(const Evaluation &x) {
     switch (settings.goal) {
       default: // GoalPower
-        return x.avgMult;
+        return x.avgPower;
       case GoalBreeder:
         return x.avgBreed;
       case GoalEfficiency:
