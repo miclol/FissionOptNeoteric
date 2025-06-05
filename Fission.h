@@ -6,8 +6,7 @@
 namespace Fission {
   using Coords = std::vector<std::tuple<int, int, int>>;
 
-  constexpr int neutronReach(4);
-  constexpr double modPower(1.0), modHeat(2.0);
+  constexpr int neutronReach(1);
 
   enum {
     // Cooler
@@ -35,32 +34,31 @@ namespace Fission {
     bool symX, symY, symZ;
     double temperature;
     bool altCalc, activeHeatsinkPrime;
-    double genMult, heatCap, heatMult, heatMultCap,
-    modFEMult, modHeatMult, FEGenMult;
+    double genMult, heatMult, modFEMult, modHeatMult, FEGenMult;
   };
 
   struct Evaluation {
     // Raw
     Coords invalidTiles;
-    double powerMult, heatMult, cooling;
-    int breed;
+    double cooling;
+    int breed, fuelCellMultiplier, moderatorCellMultiplier;
     // Computed
     double heat, netHeat, dutyCycle, avgMult, power, avgPower, avgBreed, efficiency;
 
     void compute(const Settings &settings);
+    double heatMultiplier(double heatPerTick, double coolingPerTick, double heatMult);
   };
 
   class Evaluator {
     const Settings &settings;
-    xt::xtensor<int, 3> mults, rules;
+    xt::xtensor<int, 3> rules;
     xt::xtensor<bool, 3> isActive, isModeratorInLine, visited;
     const xt::xtensor<int, 3> *state;
-    int compatibleTile;
 
     int getTileSafe(int x, int y, int z) const;
-    int getMultSafe(int x, int y, int z) const;
-    bool countMult(int x, int y, int z, int dx, int dy, int dz);
-    int countMult(int x, int y, int z);
+    int getAdjFuelCellsCountSafe(int x, int y, int z) const;
+    bool hasCellInLine(int x, int y, int z, int dx, int dy, int dz);
+    int countAdjFuelCells(int x, int y, int z);
     bool isActiveSafe(int tile, int x, int y, int z) const;
     int countActiveNeighbors(int tile, int x, int y, int z) const;
     bool isTileSafe(int tile, int x, int y, int z) const;

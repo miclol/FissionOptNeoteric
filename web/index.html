@@ -107,13 +107,13 @@
       <div class="tables"><table>
         <thead><tr id="blockType"><th>Block Type</th>
           <th class="Wt">Wt</th><th class="Rs">Rs</th><th class="He">He</th>
-          <th class="Ed">Ed</th><th class="Cr">Cr</th><th class="N">N</th>
+          <th class="Ed">Ed</th><th class="Cr">Cr</th><th class="Nt">Nt</th>
           <th class="Qz">Qz</th><th class="Au">Au</th><th class="Gs">Gs</th>
           <th class="Lp">Lp</th><th class="Dm">Dm</th><th class="Fe">Fe</th>
           <th class="Em">Em</th><th class="Cu">Cu</th><th class="Sn">Sn</th>
           <th class="Mg">Mg</th><th class="Mn">Mn</th><th class="En">En</th>
           <th class="As">As</th><th class="Pm">Pm</th><th class="Ob">Ob</th>
-          <th class="Al">Al</th><th class="Vi">Vi</th><th class="B">B</th>
+          <th class="Al">Al</th><th class="Vi">Vi</th><th class="Bo">Bo</th>
           <th class="Ag">Ag</th><th class="Fl">Fl</th><th class="Nr">Nr</th>
           <th class="Pb">Pb</th><th class="Pr">Pr</th><th class="Sm">Sm</th>
           <th class="Li">Li</th><th class="cell">[]</th><th class="mod">##</th>
@@ -213,11 +213,9 @@
       <div class="configs">
         <b>Step 5</b>: Adjust these settings to match whatever modpack you are using, or leave them as default. All
         config values can be found in either <i>common.toml</i> or <i>fission.toml</i> in the NuclearCraft config.<br>
-        <label><input type="checkbox" id="altCalc">Nuclearcraft: Neoteric &geq;v.1.2.1</label>
+        <label><input type="checkbox" id="altCalc" disabled><s>Nuclearcraft: Neoteric &geq;v1.2.2</s> (Coming Soon)</label>
         <div>Generation Multiplier: <input type="text" id="genMult" value="1"></div>
-        <div>Heat Capacity: <input type="text" id="heatCap" value="1000000"></div>
         <div>Heat Multiplier: <input type="text" id="heatMult" value="1"></div>
-        <div>Heat Multiplier Cap: <input type="text" id="heatMultCap" value="3"></div>
         <div>Moderator FE Multiplier: <input type="text" id="modFEMult" value="16.67"></div>
         <div>Moderator Heat Multiplier: <input type="text" id="modHeatMult" value="33.34"></div>
         <div>FE Generation Multiplier: <input type="text" id="FEGenMult" value="10"></div>
@@ -237,10 +235,11 @@
         you should optimize for power while limiting the cell count using the &ldquo;Max Allowed&rdquo; box for <span class="row cell" title="Reactor Cell">[]</span>.
         To get the ideal cell count, divide the fuel's base processing time by the time you want a fuel to last.
         Enabling symmetry and/or limiting block counts often speeds up the algorithm.
-        The algorithm uses fixed seed: different runs will always yield the same results unless there is an update to the algorithm (last update: 5/19/2020).
-        You can use <a href="https://www.curseforge.com/minecraft/mc-mods/building-gadgets">Building Gadgets</a> to automate the building of your reactor.
+        The algorithm uses fixed seed: different runs will always yield the same results unless there is an update to the algorithm (last update: 4/6/2025).
+        <s>You can use <a href="https://www.curseforge.com/minecraft/mc-mods/building-gadgets">Building Gadgets</a> to automate the building of your reactor.
         To do so, save the JSON of your design, load it up in <a href="https://github.com/hellrage/NC-Reactor-Planner/releases/tag/v1.2.25">Hellrage's Reactor Planner</a>,
-        and then click &ldquo;Generate BG string&rdquo;. Then you can paste it in the <a href="https://github.com/Direwolf20-MC/BuildingGadgets/wiki/Template-Manager">Template Manager</a>.<br>
+        and then click &ldquo;Generate BG string&rdquo;. Then you can paste it in the <a href="https://github.com/Direwolf20-MC/BuildingGadgets/wiki/Template-Manager">Template Manager</a>.</s>
+        <b>Support for saving is currently not implemented because the reactor planner does not support the new heat sinks.</b><br>
         <span style="color:red;">Note: in Chrome, this tab won't run in background! If you want to switch to other tabs, drag this tab out as a dedicated window and don't minimize it.</span>
       </div>
     </section>
@@ -249,7 +248,7 @@
         <a href="javascript:;" id="run">Run</a>
         <a href="javascript:;" id="pause" class="disabledLink">Pause</a>
         <a href="javascript:;" id="stop" class="disabledLink">Stop</a>
-        <a href="javascript:;" id="save" class="disabledLink">Save JSON</a>
+        <!--<a href="javascript:;" id="save" class="disabledLink">Save JSON</a>-->
       </div>
       <div id="progress"></div>
       <div id="design"></div>

@@ -60,8 +60,8 @@ namespace Fission {
           ++vInput[tileMap[sample.state(x, y, z)]];
     for (auto &[x, y, z] : sample.value.invalidTiles)
       ++vInput[tileMap.size() + tileMap[sample.state(x, y, z)]];
-    vInput.periodic(-1) = sample.value.powerMult;
-    vInput.periodic(-2) = sample.value.heatMult;
+    vInput.periodic(-1) = sample.value.fuelCellMultiplier;
+    vInput.periodic(-2) = sample.value.moderatorCellMultiplier;
     vInput.periodic(-3) = sample.value.cooling / opt.settings.fuelBaseHeat;
     vInput /= opt.settings.sizeX * opt.settings.sizeY * opt.settings.sizeZ;
     vInput.periodic(-4) = sample.value.dutyCycle;

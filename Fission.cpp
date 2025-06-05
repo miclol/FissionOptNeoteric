@@ -3,19 +3,28 @@
 
 namespace Fission {
   void Evaluation::compute(const Settings &settings) {
-    heat = settings.fuelBaseHeat * heatMult;
-    netHeat = heat - cooling;
+    double moderatorsFE = settings.fuelBasePower * moderatorCellMultiplier * settings.modFEMult / 100.0;
+    double moderatorsHeat = settings.fuelBaseHeat * moderatorCellMultiplier * settings.modHeatMult / 100.0;
+    double coolingPerTick = cooling - 1.0 / std::max(0.01, settings.temperature);
+    heat = settings.fuelBaseHeat * std::max(breed, fuelCellMultiplier) + moderatorsHeat;
+    netHeat = heat - coolingPerTick;
     dutyCycle = std::min(1.0, cooling / heat);
-    avgMult = powerMult * dutyCycle;
-    power = powerMult * settings.fuelBasePower;
+    avgMult = fuelCellMultiplier * dutyCycle;
+    power = trunc((settings.fuelBasePower * abs(fuelCellMultiplier - breed) + moderatorsFE) *
+    heatMultiplier(heat, coolingPerTick, settings.heatMult) * settings.FEGenMult / 10.0 * settings.genMult);
     avgPower = power * dutyCycle;
     avgBreed = breed * dutyCycle;
-    efficiency = breed ? powerMult / breed : 1.0;
+    double mult = fuelCellMultiplier > breed ? 1.0 * fuelCellMultiplier / breed : breed; // Silly double cast
+    efficiency = breed ? power / (settings.fuelBasePower * mult) : 1.0;
+  }
+
+  double Evaluation::heatMultiplier(double heatPerTick, double coolingPerTick, double heatMult) {
+    double c = std::max(1.0, coolingPerTick);
+    return std::log10(heatPerTick / c) / (1 + std::exp(heatPerTick / c * heatMult)) + 1;
   }
 
   Evaluator::Evaluator(const Settings &settings)
     :settings(settings),
-    mults(xt::empty<int>({settings.sizeX, settings.sizeY, settings.sizeZ})),
     rules(xt::empty<int>({settings.sizeX, settings.sizeY, settings.sizeZ})),
     isActive(xt::empty<bool>({settings.sizeX, settings.sizeY, settings.sizeZ})),
     isModeratorInLine(xt::empty<bool>({settings.sizeX, settings.sizeY, settings.sizeZ})),
@@ -27,13 +36,7 @@ namespace Fission {
     return (*state)(x, y, z);
   }
 
-  int Evaluator::getMultSafe(int x, int y, int z) const {
-    if (!mults.in_bounds(x, y, z))
-      return 0;
-    return mults(x, y, z);
-  }
-
-  bool Evaluator::countMult(int x, int y, int z, int dx, int dy, int dz) {
+  bool Evaluator::hasCellInLine(int x, int y, int z, int dx, int dy, int dz) {
     for (int n{}; n <= neutronReach; ++n) {
       x += dx; y += dy; z += dz;
       int tile(getTileSafe(x, y, z));
@@ -41,6 +44,9 @@ namespace Fission {
         for (int i{}; i < n; ++i) {
           x -= dx; y -= dy; z -= dz;
           isModeratorInLine(x, y, z) = true;
+        }
+        if (getTileSafe(x, y, z) == Moderator) { // Moderator check probably not necessary but might as well put it in
+          isActive(x, y, z) = true;
         }
         return true;
       } else if (tile != Moderator) {
@@ -50,20 +56,19 @@ namespace Fission {
     return false;
   }
 
-  int Evaluator::countMult(int x, int y, int z) {
-    return 1
-      + countMult(x, y, z, -1, 0, 0)
-      + countMult(x, y, z, +1, 0, 0)
-      + countMult(x, y, z, 0, -1, 0)
-      + countMult(x, y, z, 0, +1, 0)
-      + countMult(x, y, z, 0, 0, -1)
-      + countMult(x, y, z, 0, 0, +1);
+  int Evaluator::countAdjFuelCells(int x, int y, int z) {
+    return hasCellInLine(x, y, z, -1, 0, 0)
+         + hasCellInLine(x, y, z, +1, 0, 0)
+         + hasCellInLine(x, y, z, 0, -1, 0)
+         + hasCellInLine(x, y, z, 0, +1, 0)
+         + hasCellInLine(x, y, z, 0, 0, -1)
+         + hasCellInLine(x, y, z, 0, 0, +1);
   }
 
   bool Evaluator::isActiveSafe(int tile, int x, int y, int z) const {
     if (!state->in_bounds(x, y, z))
       return false;
-    return (*state)(x, y, z) == tile && isActive(x, y, z) && (tile < Active || settings.activeHeatsinkPrime);
+    return (*state)(x, y, z) == tile && isActive(x, y, z) && (tile < Active || tile == Moderator || settings.activeHeatsinkPrime);
   }
 
   int Evaluator::countActiveNeighbors(int tile, int x, int y, int z) const {
@@ -104,10 +109,10 @@ namespace Fission {
 
   void Evaluator::run(const xt::xtensor<int, 3> &state, Evaluation &result) {
     result.invalidTiles.clear();
-    result.powerMult = 0.0;
-    result.heatMult = 0.0;
+    result.fuelCellMultiplier = 0;
+    result.moderatorCellMultiplier = 0;
     result.cooling = 0.0;
-    result.breed = 0;
+    result.breed = 0; // Number of Cells
     isActive.fill(false);
     isModeratorInLine.fill(false);
     this->state = &state;
@@ -116,14 +121,12 @@ namespace Fission {
         for (int z{}; z < settings.sizeZ; ++z) {
           int tile((*this->state)(x, y, z));
           if (tile == Cell) {
-            int mult(countMult(x, y, z));
-            mults(x, y, z) = mult;
+            int adjFuelCells(countAdjFuelCells(x, y, z));
             rules(x, y, z) = -1;
             ++result.breed;
-            result.powerMult += mult;
-            result.heatMult += mult * (mult + 1) / 2.0;
+            result.fuelCellMultiplier += adjFuelCells * 3;
+            result.moderatorCellMultiplier += countActiveNeighbors(Moderator, x, y, z) * (adjFuelCells + 1);
           } else {
-            mults(x, y, z) = 0;
             if (tile < Active) {
               rules(x, y, z) = tile;
             } else if (tile < Cell) {
@@ -140,18 +143,7 @@ namespace Fission {
       for (int y{}; y < settings.sizeY; ++y) {
         for (int z{}; z < settings.sizeZ; ++z) {
           if ((*this->state)(x, y, z) == Moderator) {
-            int mult(
-              + getMultSafe(x - 1, y, z)
-              + getMultSafe(x + 1, y, z)
-              + getMultSafe(x, y - 1, z)
-              + getMultSafe(x, y + 1, z)
-              + getMultSafe(x, y, z - 1)
-              + getMultSafe(x, y, z + 1));
-            if (mult) {
-              isActive(x, y, z) = true;
-              result.powerMult += mult * (modPower / 6.0);
-              result.heatMult += mult * (modHeat / 6.0);
-            } else if (!isModeratorInLine(x, y, z)) {
+            if (!isModeratorInLine(x, y, z)) {
               result.invalidTiles.emplace_back(x, y, z);
             }
           } else switch (rules(x, y, z)) {
@@ -169,6 +161,9 @@ namespace Fission {
                 && (!z || z == settings.sizeZ - 1);
               break;
             case Cryotheum:
+              isActive(x, y, z) = countNeighbors(Cell, x, y, z) >= 2;
+              break;
+            case Manganese:
               isActive(x, y, z) = countNeighbors(Cell, x, y, z) >= 2;
           }
         }
@@ -209,6 +204,12 @@ namespace Fission {
             case Magnesium:
               isActive(x, y, z) = countActiveNeighbors(Moderator, x, y, z)
                 && countCasingNeighbors(x, y, z);
+              break;
+            case EndStone:
+              isActive(x, y, z) = countActiveNeighbors(Enderium, x, y, z);
+              break;
+            case Arsenic:
+              isActive(x, y, z) = countActiveNeighbors(Moderator, x, y, z) >= 3;
           }
         }
       }
@@ -228,6 +229,66 @@ namespace Fission {
               break;
             case Copper:
               isActive(x, y, z) = countActiveNeighbors(Glowstone, x, y, z);
+            case Prismarine:
+              isActive(x, y, z) = countActiveNeighbors(Water, x, y, z);
+              break;
+            case Obsidian:
+              isActive(x, y, z) =
+                isActiveSafe(Glowstone, x - 1, y, z) &&
+                isActiveSafe(Glowstone, x + 1, y, z) ||
+                isActiveSafe(Glowstone, x, y - 1, z) &&
+                isActiveSafe(Glowstone, x, y + 1, z) ||
+                isActiveSafe(Glowstone, x, y, z - 1) &&
+                isActiveSafe(Glowstone, x, y, z + 1);
+              break;
+            case Aluminium:
+              isActive(x, y, z) = countActiveNeighbors(Quartz, x, y, z)
+              && countActiveNeighbors(Lapis, x, y, z);
+              break;
+            case Villiaumite:
+              isActive(x, y, z) = countActiveNeighbors(EndStone, x, y, z)
+              && countActiveNeighbors(Redstone, x, y, z);
+              break;
+            case Boron:
+              isActive(x, y, z) = countActiveNeighbors(Quartz, x, y, z)
+              && (countCasingNeighbors(x, y, z) || countActiveNeighbors(Moderator, x, y, z));
+              break;
+            case Silver:
+              isActive(x, y, z) = countActiveNeighbors(Glowstone, x, y, z) >= 2
+              && countActiveNeighbors(Tin, x, y, z);
+          }
+        }
+      }
+    }
+
+    for (int x{}; x < settings.sizeX; ++x) {
+      for (int y{}; y < settings.sizeY; ++y) {
+        for (int z{}; z < settings.sizeZ; ++z) {
+          switch (rules(x, y, z)) {
+            case Iron:
+              isActive(x, y, z) = countActiveNeighbors(Gold, x, y, z);
+              break;
+            case Fluorite:
+              isActive(x, y, z) = countActiveNeighbors(Prismarine, x, y, z)
+              && countActiveNeighbors(Gold, x, y, z);
+              break;
+            case NetherBrick:
+              isActive(x, y, z) = countActiveNeighbors(Obsidian, x, y, z);
+          }
+        }
+      }
+    }
+
+    for (int x{}; x < settings.sizeX; ++x) {
+      for (int y{}; y < settings.sizeY; ++y) {
+        for (int z{}; z < settings.sizeZ; ++z) {
+          switch (rules(x, y, z)) {
+            case Lead:
+              isActive(x, y, z) = countActiveNeighbors(Iron, x, y, z);
+              break;
+            case Purpur:
+              isActive(x, y, z) = countActiveNeighbors(Iron, x, y, z)
+              && countCasingNeighbors(x, y, z);
           }
         }
       }
@@ -238,8 +299,24 @@ namespace Fission {
         for (int z{}; z < settings.sizeZ; ++z) {
           int tile((*this->state)(x, y, z));
           if (tile < Cell) {
-            if (rules(x, y, z) == Iron)
-              isActive(x, y, z) = countActiveNeighbors(Gold, x, y, z);
+            switch (rules(x, y, z)) {
+              case Slime:
+                isActive(x, y, z) = countActiveNeighbors(Water, x, y, z)
+                && countActiveNeighbors(Lead, x, y, z);
+                break;
+              case Lithium:
+                isActive(x, y, z) =
+                isActiveSafe(Lead, x - 1, y, z) &&
+                isActiveSafe(Lead, x + 1, y, z) ||
+                isActiveSafe(Lead, x, y - 1, z) &&
+                isActiveSafe(Lead, x, y + 1, z) ||
+                isActiveSafe(Lead, x, y, z - 1) &&
+                isActiveSafe(Lead, x, y, z + 1);
+                break;
+              case Nitrogen:
+                isActive(x, y, z) = countActiveNeighbors(Purpur, x, y, z)
+                && countActiveNeighbors(Copper, x, y, z);
+            }
             if (isActive(x, y, z))
               result.cooling += settings.coolingRates[tile];
             else

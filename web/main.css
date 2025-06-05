@@ -82,7 +82,7 @@ input {
 .Ob {color: indigo;}
 .Al {color: #d4f4e9;}
 .Vi {color: #9a7161;}
-.B  {color: silver;}
+.Bo {color: silver;}
 .Ag {color: mistyrose;}
 .Fl {color: #8dae99;}
 .Nr {color: maroon;}
@@ -90,7 +90,7 @@ input {
 .Pr {color: mediumorchid;}
 .Sm {color: lightgreen;}
 .Li {color: lavender;}
-.N  {color: #42a649;}
+.Nt {color: #42a649;}
 .air {color: white;}
 .cell {color: gray;}
 .mod {color: black;}

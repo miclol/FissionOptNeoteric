@@ -152,6 +152,7 @@ $(() => { FissionOpt().then((FissionOpt) => {
   ]); });
 
   $("#temperatureList").on("change", function() {$("#temperature").val(this.value)});
+  $("#altCalc").on("change", function() {$("#modHeatMult").val($('#altCalc').is(':checked') ? 33.33 : 33.34)});
 
   const schedule = () => {
     timeout = window.setTimeout(step, 0);
@@ -161,7 +162,7 @@ $(() => { FissionOpt().then((FissionOpt) => {
   const design = $('#design');
   const save = $('#save');
   const nCoolerTypes = 31, air = nCoolerTypes * 2 + 2;
-  const tileNames = ['Wt', 'Rs', 'He', 'Ed', 'Cr', 'N', 'Qz', 'Au', 'Gs', 'Lp', 'Dm', 'Fe', 'Em', 'Cu', 'Sn', 'Mg', 'Mn', 'En', 'As', 'Pm', 'Ob', 'Al', 'Vi', 'B', 'Ag', 'Fl', 'Nr', 'Pb', 'Pr', 'Sm', 'Li', '[]', '##', '..'];
+  const tileNames = ['Wt', 'Rs', 'He', 'Ed', 'Cr', 'Nt', 'Qz', 'Au', 'Gs', 'Lp', 'Dm', 'Fe', 'Em', 'Cu', 'Sn', 'Mg', 'Mn', 'En', 'As', 'Pm', 'Ob', 'Al', 'Vi', 'Bo', 'Ag', 'Fl', 'Nr', 'Pb', 'Pr', 'Sm', 'Li', '[]', '##', '..'];
   const tileTitles = ['Water', 'Redstone', 'Liquid Helium', 'Enderium', 'Cryotheum', 'Liquid Nitrogen', 'Quartz', 'Gold', 'Glowstone', 'Lapis', 'Diamond',
     'Iron', 'Emerald', 'Copper', 'Tin', 'Magnesium', 'Manganese', 'End Stone', 'Arsenic', 'Prismarine', 'Obsidian', 'Aluminium',
     'Villiaumite', 'Boron', 'Silver', 'Fluorite', 'Nether Brick', 'Lead', 'Purpur', 'Slime', 'Lithium', 'Reactor Cell', 'Moderator', 'Air'];
@@ -205,7 +206,7 @@ $(() => { FissionOpt().then((FissionOpt) => {
     return tileSaveNames[tile];
   };
 
-  const displaySample = (sample) => {  // TODO: Fix Avg Power, relationship not linear
+  const displaySample = (sample) => {
     design.empty();
     let block = $('<div></div>');
     const appendInfo = (label, value, unit) => {
@@ -226,7 +227,6 @@ $(() => { FissionOpt().then((FissionOpt) => {
     design.append(block);
 
     const shapes = [], strides = [], data = sample.getData();
-    console.log(data);
     for (let i = 0; i < 3; ++i) {
       shapes.push(sample.getShape(i));
       strides.push(sample.getStride(i));
@@ -238,7 +238,8 @@ $(() => { FissionOpt().then((FissionOpt) => {
       InteriorDimensions: {X: shapes[2], Y: shapes[0], Z: shapes[1]},
       CompressedReactor: {}
     };
-    resourceMap[-1] = (shapes[0] * shapes[1] + shapes[1] * shapes[2] + shapes[2] * shapes[0]) * 2;
+    console.log(shapes, strides, data);
+    resourceMap[-1] = (shapes[0] * shapes[1] + shapes[1] * shapes[2] + shapes[2] * shapes[0]) * 2 + (shapes[0] + shapes[1] + shapes[2]) * 4 + 8;
     for (let x = 0; x < shapes[0]; ++x) {
       block = $('<div></div>');
       block.append('<div>Layer ' + (x + 1) + '</div>');
@@ -350,13 +351,11 @@ $(() => { FissionOpt().then((FissionOpt) => {
         settings.symZ = $('#symZ').is(':checked');
         settings.temperature = parseValidFloat('Temperature', $('#temperature').val());
         settings.altCalc = $('#altCalc').is(':checked');
-        settings.generationMultiplier = parsePositiveFloat('Generation Multiplier', $('#genMult').val());
-        settings.heatCapacity = parsePositiveFloat('Heat Capacity', $('#heatCap').val());
-        settings.heatMultiplier = parsePositiveFloat('Heat Multiplier', $('#heatMult').val());
-        settings.heatMultiplierCap = parsePositiveFloat('Heat Multiplier Cap', $('#heatMultCap').val());
-        settings.moderatorFEMultiplier = parsePositiveFloat('Moderator FE Multiplier', $('#modFEMult').val());
-        settings.moderatorHeatMultiplier = parsePositiveFloat('Moderator Heat Multiplier', $('#modHeatMult').val());
-        settings.FEGenerationMultiplier = parsePositiveFloat('FE Generation Multiplier', $('#FEGenMult').val());
+        settings.genMult = parsePositiveFloat('Generation Multiplier', $('#genMult').val());
+        settings.heatMult = parsePositiveFloat('Heat Multiplier', $('#heatMult').val());
+        settings.modFEMult = parsePositiveFloat('Moderator FE Multiplier', $('#modFEMult').val());
+        settings.modHeatMult = parsePositiveFloat('Moderator Heat Multiplier', $('#modHeatMult').val());
+        settings.FEGenMult = parsePositiveFloat('FE Generation Multiplier', $('#FEGenMult').val());
         settings.activeHeatsinkPrime = $('#activeHeatsinkPrime').is(':checked');
         $.each(rates, (i, x) => { settings.setRate(i, parsePositiveFloat('Cooling Rate', x.val())); });
         $.each(limits, (i, x) => {
