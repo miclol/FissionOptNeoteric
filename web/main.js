@@ -216,14 +216,14 @@ $(() => { FissionOpt().then((FissionOpt) => {
       row.append(Math.round(value * 100) / 100);
       block.append(row);
     };
-    appendInfo('Max Power', sample.getPower(), 'RF/t');
+    appendInfo('Max Power', sample.getPower(), 'FE/t');
     appendInfo('Heat', sample.getHeat(), 'H/t');
     appendInfo('Cooling', sample.getCooling(), 'H/t');
     appendInfo('Net Heat', sample.getNetHeat(), 'H/t');
     appendInfo('Duty Cycle', sample.getDutyCycle() * 100, '%');
     appendInfo('Fuel Use Rate', sample.getAvgBreed(), '&times;');
     appendInfo('Efficiency', sample.getEfficiency() * 100, '%');
-    appendInfo('Avg Power', sample.getAvgPower(), 'RF/t');
+    appendInfo('Avg Power', sample.getAvgPower(), 'FE/t');
     design.append(block);
 
     const shapes = [], strides = [], data = sample.getData();
