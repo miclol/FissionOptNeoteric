@@ -265,7 +265,7 @@ $(() => { FissionOpt().then((FissionOpt) => {
         for (let x = 0; x < shapes[0]; ++x) {
           for (let y = 0; y < shapes[1]; ++y) {
             for (let z = 0; z < shapes[2]; ++z) {
-              const index = x * strides[0] + y * strides[1] + z * strides[2]
+              const index = x * strides[0] + y * strides[1] + z * strides[2];
               const savedTile = saveTile(data[index]);
               if (!internalMap.hasOwnProperty(savedTile)) {
                 palette[savedTile] = new NBT.Int32(internalIndex);
@@ -278,7 +278,7 @@ $(() => { FissionOpt().then((FissionOpt) => {
           }
         }
         res = await NBT.write({Width: new NBT.Int16(shapes[2]), Height: new NBT.Int16(shapes[0]), Length: new NBT.Int16(shapes[1]), Version: new NBT.Int32(2),
-                    DataVersion: new NBT.Int32(3465), PaletteMax: new NBT.Int32(Object.keys(resourceMap).length - 1), Palette: palette, BlockData: blockData});
+                    DataVersion: new NBT.Int32(3465), PaletteMax: new NBT.Int32(Object.keys(palette).length), Palette: palette, BlockData: blockData});
         const elem = document.createElement('a');
         const url = window.URL.createObjectURL(new Blob([res]));
         elem.setAttribute('href', url);
