@@ -164,20 +164,16 @@ $(() => { FissionOpt().then((FissionOpt) => {
   const nCoolerTypes = 31, air = nCoolerTypes * 2 + 2;
   const tileNames = ['Wt', 'Rs', 'He', 'Ed', 'Cr', 'Nt', 'Qz', 'Au', 'Gs', 'Lp', 'Dm', 'Fe', 'Em', 'Cu', 'Sn', 'Mg', 'Mn', 'En', 'As', 'Pm', 'Ob', 'Al', 'Vi', 'Bo', 'Ag', 'Fl', 'Nr', 'Pb', 'Pr', 'Sm', 'Li', '[]', '##', '..'];
   const tileTitles = ['Water', 'Redstone', 'Liquid Helium', 'Enderium', 'Cryotheum', 'Liquid Nitrogen', 'Quartz', 'Gold', 'Glowstone', 'Lapis', 'Diamond',
-    'Iron', 'Emerald', 'Copper', 'Tin', 'Magnesium', 'Manganese', 'End Stone', 'Arsenic', 'Prismarine', 'Obsidian', 'Aluminium',
-    'Villiaumite', 'Boron', 'Silver', 'Fluorite', 'Nether Brick', 'Lead', 'Purpur', 'Slime', 'Lithium', 'Reactor Cell', 'Moderator', 'Air'];
+    'Iron', 'Emerald', 'Copper', 'Tin', 'Magnesium', 'Manganese', 'End Stone', 'Arsenic', 'Prismarine', 'Obsidian', 'Aluminum',
+    'Villiaumite', 'Boron', 'Silver', 'Fluorite', 'Nether Brick', 'Lead', 'Purpur', 'Slime', 'Lithium', 'Fuel Cell', 'Moderator', 'Air'];
   $('#blockType>:not(:first)').each((i, x) => { $(x).attr('title', tileTitles[i]); });
   const tileClasses = tileNames.slice();
   tileClasses[31] = 'cell';
   tileClasses[32] = 'mod';
   tileClasses[33] = 'air';
   const tileSaveNames = tileTitles.slice(0, 32);
-  tileSaveNames[2] = 'Helium';
-  tileSaveNames[5] = 'Nitrogen';
-  tileSaveNames[17] = 'EndStone';
-  tileSaveNames[26] = 'NetherBrick';
-  tileSaveNames[31] = 'FuelCell';
-  tileSaveNames[32] = 'Graphite';
+  tileSaveNames[31] = 'fission_reactor_solid_fuel_cell';
+  tileSaveNames[32] = 'graphite_block';
 
   const displayTile = (tile) => {
     let active = false;
@@ -200,10 +196,16 @@ $(() => { FissionOpt().then((FissionOpt) => {
     if (tile >= nCoolerTypes) {
       tile -= nCoolerTypes;
       if (tile < nCoolerTypes) {
-        return "Active " + tileSaveNames[tile];
+        return "nuclearcraft:active_" + tileSaveNames[tile].toLowerCase().replaceAll(" ", "_") + "_heat_sink";
+      } else {
+        if (tile == tileTitles.length - 1) {
+          return "minecraft:air";
+        } else {
+          return "nuclearcraft:" + tileSaveNames[tile];
+        }
       }
     }
-    return tileSaveNames[tile];
+    return "nuclearcraft:" + tileSaveNames[tile].toLowerCase().replaceAll(" ", "_") + "_heat_sink";
   };
 
   const displaySample = (sample) => {
@@ -232,12 +234,6 @@ $(() => { FissionOpt().then((FissionOpt) => {
       strides.push(sample.getStride(i));
     }
     let resourceMap = {};
-    const saved = {
-      UsedFuel: {name: '', FuelTime: 0.0, BasePower: settings.fuelBasePower, BaseHeat: settings.fuelBaseHeat},
-      SaveVersion: {Major: 1, Minor: 2, Build: 24, Revision: 0, MajorRevision: 0, MinorRevision: 0},
-      InteriorDimensions: {X: shapes[2], Y: shapes[0], Z: shapes[1]},
-      CompressedReactor: {}
-    };
     resourceMap[-1] = (shapes[0] * shapes[1] + shapes[1] * shapes[2] + shapes[2] * shapes[0]) * 2 + (shapes[0] + shapes[1] + shapes[2]) * 4 + 8;
     for (let x = 0; x < shapes[0]; ++x) {
       block = $('<div></div>');
@@ -252,12 +248,6 @@ $(() => { FissionOpt().then((FissionOpt) => {
             resourceMap[tile] = 1;
           else
             ++resourceMap[tile];
-          const savedTile = saveTile(tile);
-          if (savedTile !== undefined) {
-            if (!saved.CompressedReactor.hasOwnProperty(savedTile))
-              saved.CompressedReactor[savedTile] = [];
-            saved.CompressedReactor[savedTile].push({X: z + 1, Y: x + 1, Z: y + 1});
-          }
           row.append(displayTile(tile));
         }
         block.append(row);
@@ -267,12 +257,35 @@ $(() => { FissionOpt().then((FissionOpt) => {
 
     save.removeClass('disabledLink');
     save.off('click').click(() => {
-      const elem = document.createElement('a');
-      const url = window.URL.createObjectURL(new Blob([JSON.stringify(saved)], {type: 'text/json'}));
-      elem.setAttribute('href', url);
-      elem.setAttribute('download', 'reactor.json');
-      elem.click();
-      window.URL.revokeObjectURL(url);
+      import("https://cdn.jsdelivr.net/npm/nbtify@2.2.0/+esm").then(async (NBT) => {
+        internalMap = {}, palette = {};
+        let data = sample.getData();
+        internalIndex = 0;
+        blockData = new Int8Array(shapes[0] * shapes[1] * shapes[2]);
+        for (let x = 0; x < shapes[0]; ++x) {
+          for (let y = 0; y < shapes[1]; ++y) {
+            for (let z = 0; z < shapes[2]; ++z) {
+              const index = x * strides[0] + y * strides[1] + z * strides[2]
+              const savedTile = saveTile(data[index]);
+              if (!internalMap.hasOwnProperty(savedTile)) {
+                palette[savedTile] = new NBT.Int32(internalIndex);
+                blockData[index] = internalIndex;
+                internalMap[savedTile] = internalIndex++;
+              } else {
+                blockData[index] = internalMap[savedTile];
+              }
+            }
+          }
+        }
+        res = await NBT.write({Width: new NBT.Int16(shapes[2]), Height: new NBT.Int16(shapes[0]), Length: new NBT.Int16(shapes[1]), Version: new NBT.Int32(2),
+                    DataVersion: new NBT.Int32(3465), PaletteMax: new NBT.Int32(Object.keys(resourceMap).length - 1), Palette: palette, BlockData: blockData});
+        const elem = document.createElement('a');
+        const url = window.URL.createObjectURL(new Blob([res]));
+        elem.setAttribute('href', url);
+        elem.setAttribute('download', 'reactor.schem');
+        elem.click();
+        window.URL.revokeObjectURL(url);
+      });
     });
 
     block = $('<div></div>');
