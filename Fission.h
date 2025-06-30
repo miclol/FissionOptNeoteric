@@ -6,8 +6,6 @@
 namespace Fission {
   using Coords = std::vector<std::tuple<int, int, int>>;
 
-  constexpr int neutronReach(1);
-
   enum {
     // Cooler
     Water, Redstone, Helium, Enderium, Cryotheum, Nitrogen, Quartz, Gold,
@@ -41,12 +39,12 @@ namespace Fission {
     // Raw
     Coords invalidTiles;
     double cooling;
-    int breed, fuelCellMultiplier, moderatorCellMultiplier;
+    int breed, fuelCellMultiplier, moderatorCellMultiplier, cellsHeatMult, cellsEnergyMult;
     // Computed
     double heat, netHeat, dutyCycle, power, avgPower, avgBreed, efficiency;
 
     void compute(const Settings &settings);
-    double heatMultiplier(double heatPerTick, double coolingPerTick, double heatMult);
+    double heatMultiplier(double heatPerTick, double coolingPerTick, double heatMult, bool altCalc);
   };
 
   class Evaluator {
@@ -54,7 +52,7 @@ namespace Fission {
     xt::xtensor<int, 3> rules;
     xt::xtensor<bool, 3> isActive, isModeratorInLine, visited;
     const xt::xtensor<int, 3> *state;
-
+    
     int getTileSafe(int x, int y, int z) const;
     int getAdjFuelCellsCountSafe(int x, int y, int z) const;
     bool hasCellInLine(int x, int y, int z, int dx, int dy, int dz);

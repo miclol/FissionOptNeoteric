@@ -3,26 +3,38 @@
 
 namespace Fission {
   void Evaluation::compute(const Settings &settings) {
-    double moderatorsFE = settings.fuelBasePower * moderatorCellMultiplier * settings.modFEMult / 100.0;
-    double moderatorsHeat = settings.fuelBaseHeat * moderatorCellMultiplier * settings.modHeatMult / 100.0;
     cooling += 1.0 / std::max(0.01, settings.temperature);
-    heat = settings.fuelBaseHeat * std::max(breed, fuelCellMultiplier) + moderatorsHeat;
+    double moderatorsFE = moderatorCellMultiplier * settings.modFEMult / 100.0;
+    double moderatorsHeat = moderatorCellMultiplier * settings.modHeatMult / 100.0;
+    if (settings.altCalc) {
+      heat = settings.fuelBaseHeat * (cellsHeatMult + moderatorsHeat);
+      power = settings.fuelBasePower * (cellsEnergyMult + moderatorsFE);
+    } else {
+      moderatorsFE *= settings.fuelBasePower;
+      moderatorsHeat *= settings.fuelBaseHeat;
+      heat = settings.fuelBaseHeat * std::max(breed, fuelCellMultiplier) + moderatorsHeat;
+      power = settings.fuelBasePower * abs(fuelCellMultiplier - breed) + moderatorsFE;
+    }
+    power = trunc(power * heatMultiplier(heat, cooling, settings.heatMult, settings.altCalc) * settings.FEGenMult / 10.0 * settings.genMult);
     netHeat = heat - cooling;
     dutyCycle = std::min(1.0, cooling / heat);
-    power = trunc((settings.fuelBasePower * abs(fuelCellMultiplier - breed) + moderatorsFE) *
-    heatMultiplier(heat, cooling, settings.heatMult) * settings.FEGenMult / 10.0 * settings.genMult);
     avgPower = power * dutyCycle;
     avgBreed = breed * dutyCycle;
     double mult = fuelCellMultiplier > breed ? 1.0 * fuelCellMultiplier / breed : breed; // Silly double cast
     efficiency = breed ? power / (settings.fuelBasePower * mult) : 1.0;
   }
 
-  double Evaluation::heatMultiplier(double heatPerTick, double coolingPerTick, double heatMult) {
+  double Evaluation::heatMultiplier(double heatPerTick, double coolingPerTick, double heatMult, bool altCalc) {
     if (heatPerTick == 0.0) {
       return 0.0;
     }
     double c = std::max(1.0, coolingPerTick);
-    return std::log10(heatPerTick / c) / (1 + std::exp(heatPerTick / c * heatMult)) + 1;
+    double heatMultiplier = std::log10(heatPerTick / c) / (1 + std::exp(heatPerTick / c * heatMult)) + 1;
+    if (altCalc) {
+      return round(heatMultiplier * 100) / 100;
+    } else {
+      return heatMultiplier;
+    }
   }
 
   Evaluator::Evaluator(const Settings &settings)
@@ -39,7 +51,7 @@ namespace Fission {
   }
 
   bool Evaluator::hasCellInLine(int x, int y, int z, int dx, int dy, int dz) {
-    for (int n{}; n <= neutronReach; ++n) {
+    for (int n{}; n <= (settings.altCalc ? 4 : 1); ++n) {
       x += dx; y += dy; z += dz;
       int tile(getTileSafe(x, y, z));
       if (tile == Cell) {
@@ -111,6 +123,8 @@ namespace Fission {
 
   void Evaluator::run(const xt::xtensor<int, 3> &state, Evaluation &result) {
     result.invalidTiles.clear();
+    result.cellsHeatMult = 0;
+    result.cellsEnergyMult = 0;
     result.fuelCellMultiplier = 0;
     result.moderatorCellMultiplier = 0;
     result.cooling = 0.0;
@@ -126,7 +140,12 @@ namespace Fission {
             int adjFuelCells(countAdjFuelCells(x, y, z));
             rules(x, y, z) = -1;
             ++result.breed;
-            result.fuelCellMultiplier += adjFuelCells * 3;
+            if (settings.altCalc) {
+              result.cellsHeatMult += ((adjFuelCells + 1) * (adjFuelCells + 2)) / 2;
+              result.cellsEnergyMult += adjFuelCells + 1;
+            } else {
+              result.fuelCellMultiplier += adjFuelCells * 3;
+            }
             result.moderatorCellMultiplier += countActiveNeighbors(Moderator, x, y, z) * (adjFuelCells + 1);
           } else {
             if (tile < Active) {

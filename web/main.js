@@ -152,7 +152,10 @@ $(() => { FissionOpt().then((FissionOpt) => {
   ]); });
 
   $("#temperatureList").on("change", function() {$("#temperature").val(this.value)});
-  $("#altCalc").on("change", function() {$("#modHeatMult").val($('#altCalc').is(':checked') ? 33.33 : 33.34)});
+  $("#altCalc").on("change", function() {
+    $("#modFEMult").val($('#altCalc').is(':checked') ? 16.666666667 : 16.67);
+    $("#modHeatMult").val($('#altCalc').is(':checked') ? 33.33333333 : 33.34);
+  });
 
   const schedule = () => {
     timeout = window.setTimeout(step, 0);
