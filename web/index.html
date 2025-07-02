@@ -235,9 +235,11 @@
         you should optimize for power while limiting the cell count using the &ldquo;Max Allowed&rdquo; box for <span class="row cell" title="Reactor Cell">[]</span>.
         To get the ideal cell count, divide the fuel's base processing time by the time you want a fuel to last.
         Enabling symmetry and/or limiting block counts often speeds up the algorithm.
-        The algorithm uses fixed seed: different runs will always yield the same results unless there is an update to the algorithm (last update: 5/6/2025).
+        The algorithm uses fixed seed: different runs will always yield the same results unless there is an update to the algorithm (last update: 30/6/2025).<br>
         You can use <a href="https://www.curseforge.com/minecraft/mc-mods/forgematica">Forgematica</a> to automate the building of your reactor. To do so, download the 
         schematic and put it in the schematics folder of your Minecraft instance. Note that Forgematica also needs <a href="https://www.curseforge.com/minecraft/mc-mods/mafglib">MaFgLib</a> to run.<br>
+        Alternatively, you could also use <a href="https://www.curseforge.com/minecraft/mc-mods/building-gadgets">Building Gadgets</a> to automate the building of your reactor by copying the BG
+        String and pasting it in the Template Manager to create a template.<br>
         <span style="color:red;">Note: in Chrome, this tab won't run in background! If you want to switch to other tabs, drag this tab out as a dedicated window and don't minimize it.</span>
       </div>
     </section>
@@ -247,6 +249,7 @@
         <a href="javascript:;" id="pause" class="disabledLink">Pause</a>
         <a href="javascript:;" id="stop" class="disabledLink">Stop</a>
         <a href="javascript:;" id="save" class="disabledLink">Save Schematic</a>
+        <a href="javascript:;" id="bgString" class="disabledLink">Copy BG String</a>
       </div>
       <div id="progress"></div>
       <div id="design"></div>

@@ -164,6 +164,7 @@ $(() => { FissionOpt().then((FissionOpt) => {
   const settings = new FissionOpt.FissionSettings();
   const design = $('#design');
   const save = $('#save');
+  const bgString = $('#bgString');
   const nCoolerTypes = 31, air = nCoolerTypes * 2 + 2;
   const tileNames = ['Wt', 'Rs', 'He', 'Ed', 'Cr', 'Nt', 'Qz', 'Au', 'Gs', 'Lp', 'Dm', 'Fe', 'Em', 'Cu', 'Sn', 'Mg', 'Mn', 'En', 'As', 'Pm', 'Ob', 'Al', 'Vi', 'Bo', 'Ag', 'Fl', 'Nr', 'Pb', 'Pr', 'Sm', 'Li', '[]', '##', '..'];
   const tileTitles = ['Water', 'Redstone', 'Liquid Helium', 'Enderium', 'Cryotheum', 'Liquid Nitrogen', 'Quartz', 'Gold', 'Glowstone', 'Lapis', 'Diamond',
@@ -238,15 +239,15 @@ $(() => { FissionOpt().then((FissionOpt) => {
     }
     let resourceMap = {};
     resourceMap[-1] = (shapes[0] * shapes[1] + shapes[1] * shapes[2] + shapes[2] * shapes[0]) * 2 + (shapes[0] + shapes[1] + shapes[2]) * 4 + 8;
-    for (let x = 0; x < shapes[0]; ++x) {
+    for (let y = 0; y < shapes[0]; ++y) {
       block = $('<div></div>');
-      block.append('<div>Layer ' + (x + 1) + '</div>');
-      for (let y = 0; y < shapes[1]; ++y) {
+      block.append('<div>Layer ' + (y + 1) + '</div>');
+      for (let z = 0; z < shapes[1]; ++z) {
         const row = $('<div></div>').addClass('row');
-        for (let z = 0; z < shapes[2]; ++z) {
-          if (z)
+        for (let x = 0; x < shapes[2]; ++x) {
+          if (x)
             row.append(' ');
-          const tile = data[x * strides[0] + y * strides[1] + z * strides[2]];
+          const tile = data[y * strides[0] + z * strides[1] + x * strides[2]];
           if (!resourceMap.hasOwnProperty(tile))
             resourceMap[tile] = 1;
           else
@@ -265,10 +266,10 @@ $(() => { FissionOpt().then((FissionOpt) => {
         let data = sample.getData();
         internalIndex = 0;
         blockData = new Int8Array(shapes[0] * shapes[1] * shapes[2]);
-        for (let x = 0; x < shapes[0]; ++x) {
-          for (let y = 0; y < shapes[1]; ++y) {
-            for (let z = 0; z < shapes[2]; ++z) {
-              const index = x * strides[0] + y * strides[1] + z * strides[2];
+        for (let y = 0; y < shapes[0]; ++y) {
+          for (let z = 0; z < shapes[1]; ++z) {
+            for (let x = 0; x < shapes[2]; ++x) {
+              const index = y * strides[0] + z * strides[1] + x * strides[2];
               const savedTile = saveTile(data[index]);
               if (!internalMap.hasOwnProperty(savedTile)) {
                 palette[savedTile] = new NBT.Int32(internalIndex);
@@ -289,6 +290,30 @@ $(() => { FissionOpt().then((FissionOpt) => {
         elem.click();
         window.URL.revokeObjectURL(url);
       });
+    });
+
+    bgString.removeClass('disabledLink');
+    bgString.off('click').click(() => {
+      internalMap = {};
+      let data = sample.getData();
+      internalIndex = 0;
+      stateList = [];
+      for (let y = 0; y < shapes[1]; ++y) {
+        for (let z = 0; z < shapes[0]; ++z) {
+          for (let x = 0; x < shapes[2]; ++x) {
+            const savedTile = `{Name:\\"${saveTile(data[z * shapes[2] * shapes[1] + y * shapes[2] + x])}\\"}`;
+            if (!internalMap.hasOwnProperty(savedTile)) {
+              stateList.push(internalIndex);
+              internalMap[savedTile] = internalIndex++;
+            } else {
+              stateList.push(internalMap[savedTile]);
+            }
+          }
+        }
+      }
+      string = `{"statePosArrayList": "{blockstatemap:[${Object.keys(internalMap)}],startpos:{X:0,Y:0,Z:0},` +
+      `endpos:{X:${shapes[2] - 1},Y:${shapes[0] - 1},Z:${shapes[1] - 1}},statelist:[I;${stateList}]}"}`;
+      navigator.clipboard.writeText(string);
     });
 
     block = $('<div></div>');
