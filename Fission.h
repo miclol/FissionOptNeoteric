@@ -13,7 +13,7 @@ namespace Fission {
     Manganese, EndStone, Arsenic, Prismarine, Obsidian, Aluminium, Villiaumite,
     Boron, Silver, Fluorite, NetherBrick, Lead, Purpur, Slime, Lithium, Active,
     // Other
-    Cell = Active * 2, Moderator, Air
+    Cell = Active * 2, Moderator, Air, Casing
   };
 
   enum {
@@ -33,11 +33,14 @@ namespace Fission {
     double temperature;
     bool altCalc, activeHeatsinkPrime;
     double genMult, heatMult, modFEMult, modHeatMult, FEGenMult;
+    std::vector<std::vector<int>> rules[Active];
+    int schedule[Cell];
   };
 
   struct Evaluation {
     // Raw
     Coords invalidTiles;
+    Coords cachedTilePos[Cell];
     double cooling;
     int breed, fuelCellMultiplier, moderatorCellMultiplier, cellsHeatMult, cellsEnergyMult;
     // Computed
@@ -49,7 +52,6 @@ namespace Fission {
 
   class Evaluator {
     const Settings &settings;
-    xt::xtensor<int, 3> rules;
     xt::xtensor<bool, 3> isActive, isModeratorInLine, visited;
     const xt::xtensor<int, 3> *state;
     
@@ -62,6 +64,9 @@ namespace Fission {
     bool isTileSafe(int tile, int x, int y, int z) const;
     int countNeighbors(int tile, int x, int y, int z) const;
     int countCasingNeighbors(int x, int y, int z) const;
+    bool validateTile(int tile, int x, int y, int z) const;
+    int validateNeighbors(int tile, int x, int y, int z) const;
+    bool parseRule(int rule, int x, int y, int z) const;
   public:
     Evaluator(const Settings &settings);
     void run(const xt::xtensor<int, 3> &state, Evaluation &result);

@@ -17,7 +17,8 @@
       </div>
       <div>
         This tool generates a fission reactor design that maximizes effective power output, breeding speed or efficiency. This page is for
-        NuclearCraft: Neoteric <b>v1.1.2-v1.2.0, &geq;v1.2.3-rc</b>. For the original version of NuclearCraft, click <a href="https://leu-235.com/">here</a>.
+        <b>NuclearCraft: Neoteric v1.1.2-v1.2.0, &geq;v1.2.3-rc</b>, and <b>Monifactory v0.11.3-v0.12.6, &geq;v0.12.9</b>. For the
+        original version of NuclearCraft, click <a href="https://leu-235.com/">here</a>.
       </div>
     </header>
     <section id="settings">
@@ -42,7 +43,7 @@
           <td>HECm-247</td><td>LEB-248</td><td>HEB-248</td><td>LECf-249</td>
           <td>HECf-249</td><td>LECf-251</td><td>HECf-251</td>
         </tr></thead>
-        <tr><th>Default</th>
+        <tr><th>NC:N</th>
           <td><a href="javascript:;" id="DefTBU">Normal</a><br><a href="javascript:;" id="DefTBUO">OX</a>
           <a href="javascript:;" id="DefTBUN">NI</a> <a href="javascript:;" id="DefTBUZ">ZA</a></td>
           <td><a href="javascript:;" id="DefLEU235">Normal</a><br><a href="javascript:;" id="DefLEU235O">OX</a>
@@ -98,14 +99,47 @@
           <td><a href="javascript:;" id="DefHECf251">Normal</a><br><a href="javascript:;" id="DefHECf251O">OX</a>
           <a href="javascript:;" id="DefHECf251N">NI</a> <a href="javascript:;" id="DefHECf251Z">ZA</a></td>
         </tr>
+        <tr>
+          <th>Monifactory<br>v0.11.3-v0.12.9</th>
+          <td><a href="javascript:;" id="PreMoniTBU">Normal</a></td><td><a href="javascript:;" id="PreMoniLEU235">Normal</a></td>
+          <td><a href="javascript:;" id="PreMoniHEU235">Normal</a></td><td><a href="javascript:;" id="PreMoniLEU233">Normal</a></td>
+          <td><a href="javascript:;" id="PreMoniHEU233">Normal</a></td><td><a href="javascript:;" id="PreMoniLEN236">Normal</a></td>
+          <td><a href="javascript:;" id="PreMoniHEN236">Normal</a></td><td>&mdash;</td><td>&mdash;</td>
+          <td><a href="javascript:;" id="PreMoniLEP239">Normal</a></td><td><a href="javascript:;" id="PreMoniHEP239">Normal</a></td>
+          <td><a href="javascript:;" id="PreMoniLEP241">Normal</a></td><td><a href="javascript:;" id="PreMoniHEP241">Normal</a></td>
+          <td><a href="javascript:;" id="PreMoniLEA242">Normal</a></td><td><a href="javascript:;" id="PreMoniHEA242">Normal</a></td>
+          <td><a href="javascript:;" id="PreMoniLECm243">Normal</a></td><td><a href="javascript:;" id="PreMoniHECm243">Normal</a></td>
+          <td><a href="javascript:;" id="PreMoniLECm245">Normal</a></td><td><a href="javascript:;" id="PreMoniHECm245">Normal</a></td>
+          <td><a href="javascript:;" id="PreMoniLECm247">Normal</a></td><td><a href="javascript:;" id="PreMoniHECm247">Normal</a></td>
+          <td><a href="javascript:;" id="PreMoniLEB248">Normal</a></td><td><a href="javascript:;" id="PreMoniHEB248">Normal</a></td>
+          <td><a href="javascript:;" id="PreMoniLECf249">Normal</a></td><td><a href="javascript:;" id="PreMoniHECf249">Normal</a></td>
+          <td><a href="javascript:;" id="PreMoniLECf251">Normal</a></td><td><a href="javascript:;" id="PreMoniHECf251">Normal</a></td>
+        </tr>
+        <tr>
+          <th>Monifactory<br>&geq;v0.13.0</th>
+          <td><a href="javascript:;" id="PostMoniTBU">Normal</a></td><td><a href="javascript:;" id="PostMoniLEU235">Normal</a></td>
+          <td><a href="javascript:;" id="PostMoniHEU235">Normal</a></td><td><a href="javascript:;" id="PostMoniLEU233">Normal</a></td>
+          <td><a href="javascript:;" id="PostMoniHEU233">Normal</a></td><td><a href="javascript:;" id="PostMoniLEN236">Normal</a></td>
+          <td><a href="javascript:;" id="PostMoniHEN236">Normal</a></td><td>&mdash;</td><td>&mdash;</td>
+          <td><a href="javascript:;" id="PostMoniLEP239">Normal</a></td><td><a href="javascript:;" id="PostMoniHEP239">Normal</a></td>
+          <td><a href="javascript:;" id="PostMoniLEP241">Normal</a></td><td><a href="javascript:;" id="PostMoniHEP241">Normal</a></td>
+          <td><a href="javascript:;" id="PostMoniLEA242">Normal</a></td><td><a href="javascript:;" id="PostMoniHEA242">Normal</a></td>
+          <td><a href="javascript:;" id="PostMoniLECm243">Normal</a></td><td><a href="javascript:;" id="PostMoniHECm243">Normal</a></td>
+          <td><a href="javascript:;" id="PostMoniLECm245">Normal</a></td><td><a href="javascript:;" id="PostMoniHECm245">Normal</a></td>
+          <td><a href="javascript:;" id="PostMoniLECm247">Normal</a></td><td><a href="javascript:;" id="PostMoniHECm247">Normal</a></td>
+          <td><a href="javascript:;" id="PostMoniLEB248">Normal</a></td><td><a href="javascript:;" id="PostMoniHEB248">Normal</a></td>
+          <td><a href="javascript:;" id="PostMoniLECf249">Normal</a></td><td><a href="javascript:;" id="PostMoniHECf249">Normal</a></td>
+          <td><a href="javascript:;" id="PostMoniLECf251">Normal</a></td><td><a href="javascript:;" id="PostMoniHECf251">Normal</a></td>
+        </tr>
       </table></div>
+      <div>If you're playing Monifactory v0.11.3-v0.11.5 and using LEB-248, click <a href="javascript:;" id="oldLEB248">here</a> once.</div>
       <div>
         <b>Step 3</b>: If you want to limit the usage of a type of block, enter the maximum number allowed in the table below.
         Enter zero to completely disable that block. You can hover over the acronym to see the full name of each block.
         Active coolers are disabled by default. You can enable them by removing the zeros. <b><i>NOTE: Irradiators are not supported.</i></b>
       </div>
       <div class="tables"><table>
-        <thead><tr id="blockType"><th>Block Type</th>
+        <thead><tr class="blockType"><th>Block Type</th>
           <th class="Wt">Wt</th><th class="Rs">Rs</th><th class="He">He</th>
           <th class="Ed">Ed</th><th class="Cr">Cr</th><th class="Nt">Nt</th>
           <th class="Qz">Qz</th><th class="Au">Au</th><th class="Gs">Gs</th>
@@ -120,17 +154,17 @@
         </tr></thead>
         <tbody>
           <tr id="rate"><th>Cooling Rate (H/t)</th>
-            <td><input type="text" value="60"></td><td><input type="text" value="90"></td><td><input type="text" value="140"></td>
-            <td><input type="text" value="120"></td><td><input type="text" value="160"></td><td><input type="text" value="185"></td>
-            <td><input type="text" value="90"></td><td><input type="text" value="120"></td><td><input type="text" value="130"></td>
-            <td><input type="text" value="120"></td><td><input type="text" value="150"></td><td><input type="text" value="80"></td>
-            <td><input type="text" value="160"></td><td><input type="text" value="80"></td><td><input type="text" value="120"></td>
-            <td><input type="text" value="110"></td><td><input type="text" value="150"></td><td><input type="text" value="40"></td>
-            <td><input type="text" value="135"></td><td><input type="text" value="115"></td><td><input type="text" value="40"></td>
-            <td><input type="text" value="175"></td><td><input type="text" value="180"></td><td><input type="text" value="160"></td>
-            <td><input type="text" value="170"></td><td><input type="text" value="160"></td><td><input type="text" value="70"></td>
-            <td><input type="text" value="60"></td><td><input type="text" value="95"></td><td><input type="text" value="145"></td>
-            <td><input type="text" value="130"></td><td>&mdash;</td><td>&mdash;</td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td></td><td>&mdash;</td><td>&mdash;</td>
           </tr>
           <tr id="limit"><th>Max Allowed</th>
             <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
@@ -146,17 +180,17 @@
             <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
           </tr>
           <tr id="activeRate"><th>Active Rate (H/t)</th>
-            <td><input type="text" value="150"></td><td><input type="text" value="270"></td><td><input type="text" value="420"></td>
-            <td><input type="text" value="360"></td><td><input type="text" value="480"></td><td><input type="text" value="555"></td>
-            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
-            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
-            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
-            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
-            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
-            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
-            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
-            <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
-            <td><input type="text" value="0"><td>&mdash;</td><td>&mdash;</td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td><td><input type="text"></td><td><input type="text"></td>
+            <td><input type="text"></td></td><td>&mdash;</td><td>&mdash;</td>
           </tr>
           <tr id="activeLimit"><th>Max Active Allowed</th>
             <td><input type="text" value="0"></td><td><input type="text" value="0"></td><td><input type="text" value="0"></td>
@@ -174,7 +208,59 @@
         </tbody>
       </table></div>
       <div>
-        <b>Step 4</b>: If you want the generator to factor in the biome you are building this in, select the biome from the dropdown menu below.
+        <b>Step 4</b>: Load the cooling rate data by clicking on one of the following modpack configs:
+        <a href="javascript:;" id="DefRate">NC:N v1.1.2-v1.2.0 (Moni v0.11.3-v0.12.6)</a>&nbsp;
+        <a href="javascript:;" id="PreMoniRate">NC:N &geq;v1.2.3-rc (Moni v0.12.9)</a>&nbsp;
+        <a href="javascript:;" id="PostMoniRate">Moni &geq;v0.13.0</a>.
+        Alternatively, you can enter the data yourself. Passive cooling rates are in the tooltip of each cooler item. Active cooling rates are in JEI.
+        If you're playing on Monifactory, click <a href="javascript:;" id="removeVilliaumite">here</a>.
+      </div>
+      <div>
+        <b>Step 5</b>: Load rule presets by clicking on of the following modpack configs:
+        <a href="javascript:;" id="DefRules">NC:N v1.1.2-v1.2.0 (Moni v0.11.3-v0.12.6)</a>&nbsp;
+        <a href="javascript:;" id="PreMoniRules">NC:N &geq;v1.2.3-rc (Moni v0.12.9)</a>&nbsp;
+        <a href="javascript:;" id="PostMoniRules">Moni &geq;v0.13.0</a>. Alternatively,
+        you can input the rules of each heat sink yourself, following the same format seen in <i>config/Nuclearcraft/heat_sinks/! README.TXT</i>
+        but without the quotation marks, as well as shortening the dependencies as above. If a check for reactor casing(s) is required, use
+        <span class="row case" title="Reactor Casing">()</span> as substitution. See the exisiting presets for clarification.
+      </div>
+      <div class="tables"><table>
+        <thead><tr class="blockType"><th>Block Type</th>
+          <th class="Wt">Wt</th><th class="Rs">Rs</th><th class="He">He</th>
+          <th class="Ed">Ed</th><th class="Cr">Cr</th><th class="Nt">Nt</th>
+          <th class="Qz">Qz</th><th class="Au">Au</th><th class="Gs">Gs</th>
+          <th class="Lp">Lp</th><th class="Dm">Dm</th><th class="Fe">Fe</th>
+          <th class="Em">Em</th><th class="Cu">Cu</th><th class="Sn">Sn</th>
+          <th class="Mg">Mg</th><th class="Mn">Mn</th><th class="En">En</th>
+          <th class="As">As</th><th class="Pm">Pm</th><th class="Ob">Ob</th>
+          <th class="Al">Al</th><th class="Vi">Vi</th><th class="Bo">Bo</th>
+          <th class="Ag">Ag</th><th class="Fl">Fl</th><th class="Nr">Nr</th>
+          <th class="Pb">Pb</th><th class="Pr">Pr</th><th class="Sm">Sm</th>
+          <th class="Li">Li</th>
+        </tr></thead>
+        <tbody>
+          <tr id="rules"><th>Rules</th>
+            <td><div contenteditable="true" spellcheck="false"></div></td><td><div contenteditable="true" spellcheck="false"></div></td>
+            <td><div contenteditable="true" spellcheck="false"></div></td><td><div contenteditable="true" spellcheck="false"></div></td>
+            <td><div contenteditable="true" spellcheck="false"></div></td><td><div contenteditable="true" spellcheck="false"></div></td>
+            <td><div contenteditable="true" spellcheck="false"></div></td><td><div contenteditable="true" spellcheck="false"></div></td>
+            <td><div contenteditable="true" spellcheck="false"></div></td><td><div contenteditable="true" spellcheck="false"></div></td>
+            <td><div contenteditable="true" spellcheck="false"></div></td><td><div contenteditable="true" spellcheck="false"></div></td>
+            <td><div contenteditable="true" spellcheck="false"></div></td><td><div contenteditable="true" spellcheck="false"></div></td>
+            <td><div contenteditable="true" spellcheck="false"></div></td><td><div contenteditable="true" spellcheck="false"></div></td>
+            <td><div contenteditable="true" spellcheck="false"></div></td><td><div contenteditable="true" spellcheck="false"></div></td>
+            <td><div contenteditable="true" spellcheck="false"></div></td><td><div contenteditable="true" spellcheck="false"></div></td>
+            <td><div contenteditable="true" spellcheck="false"></div></td><td><div contenteditable="true" spellcheck="false"></div></td>
+            <td><div contenteditable="true" spellcheck="false"></div></td><td><div contenteditable="true" spellcheck="false"></div></td>
+            <td><div contenteditable="true" spellcheck="false"></div></td><td><div contenteditable="true" spellcheck="false"></div></td>
+            <td><div contenteditable="true" spellcheck="false"></div></td><td><div contenteditable="true" spellcheck="false"></div></td>
+            <td><div contenteditable="true" spellcheck="false"></div></td><td><div contenteditable="true" spellcheck="false"></div></td>
+            <td><div contenteditable="true" spellcheck="false"></div></td>
+          </tr>
+        </tbody>
+      </table></div>
+      <div>
+        <b>Step 6</b>: If you want the generator to factor in the biome you are building this in, select the biome from the dropdown menu below.
         Otherwise, leave the dropdown and textbox as is. Alternatively, you can manually enter the biome temperature in the textbox below.
       </div>
       <div>Biome Temperature: <input type="text" id="temperature" value="2"></div>
@@ -211,8 +297,12 @@
         </optgroup>
       </select>
       <div class="configs">
-        <b>Step 5</b>: Adjust these settings to match whatever modpack you are using, or leave them as default. All
-        config values can be found in either <i>common.toml</i> or <i>fission.toml</i> in the NuclearCraft config.<br>
+        <b>Step 7</b>: Load the config data by clicking on one of the following modpack configs:
+        <a href="javascript:;" id="DefConf">NC:N v1.1.2-v1.2.0</a>&nbsp;
+        <a href="javascript:;" id="AltConf">NC:N &geq;v1.2.3-rc</a>&nbsp;
+        <a href="javascript:;" id="PreMoniConf">Moni v0.11.3-v0.12.6</a>&nbsp;
+        <a href="javascript:;" id="PostMoniConf">Moni &geq;v0.12.9</a>. Alternatively, manually input the config data yourself.
+        All config values can be found in either <i>common.toml</i> or <i>fission.toml</i> in the NuclearCraft config.<br>
         <label><input type="checkbox" id="altCalc" checked>Nuclearcraft: Neoteric &geq;v1.2.3-rc</label>
         <div>Generation Multiplier: <input type="text" id="genMult" value="1"></div>
         <div>Heat Multiplier: <input type="text" id="heatMult" value="1"></div>
@@ -222,7 +312,7 @@
         <label><input type="checkbox" id="activeHeatsinkPrime" checked>Active Heatsink Prime</label>
       </div>
       <div>
-        <b>Step 6</b>: Adjust the options below and click &ldquo;Run&rdquo; to start the optimization.<br>
+        <b>Step 8</b>: Adjust the options below and click &ldquo;Run&rdquo; to start the optimization.<br>
         <label><input type="checkbox" id="ensureHeatNeutral" checked>Only generate heat neutral reactor.</label><br>
         <label><input type="radio" name="goal" value="0" checked>Optimize for power.</label><br>
         <label><input type="radio" name="goal" value="1">Optimize for breeding (maximize fuel consumption rate).</label><br>
@@ -235,7 +325,7 @@
         you should optimize for power while limiting the cell count using the &ldquo;Max Allowed&rdquo; box for <span class="row cell" title="Reactor Cell">[]</span>.
         To get the ideal cell count, divide the fuel's base processing time by the time you want a fuel to last.
         Enabling symmetry and/or limiting block counts often speeds up the algorithm.
-        The algorithm uses fixed seed: different runs will always yield the same results unless there is an update to the algorithm (last update: 30/6/2025).<br>
+        The algorithm uses fixed seed: different runs will always yield the same results unless there is an update to the algorithm (last update: 28/7/2025).<br>
         You can use <a href="https://www.curseforge.com/minecraft/mc-mods/forgematica">Forgematica</a> to automate the building of your reactor. To do so, download the 
         schematic and put it in the schematics folder of your Minecraft instance. Note that Forgematica also needs <a href="https://www.curseforge.com/minecraft/mc-mods/mafglib">MaFgLib</a> to run.<br>
         Alternatively, you could also use <a href="https://www.curseforge.com/minecraft/mc-mods/building-gadgets">Building Gadgets</a> to automate the building of your reactor by copying the BG

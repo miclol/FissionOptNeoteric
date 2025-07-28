@@ -39,7 +39,6 @@ namespace Fission {
 
   Evaluator::Evaluator(const Settings &settings)
     :settings(settings),
-    rules(xt::empty<int>({settings.sizeX, settings.sizeY, settings.sizeZ})),
     isActive(xt::empty<bool>({settings.sizeX, settings.sizeY, settings.sizeZ})),
     isModeratorInLine(xt::empty<bool>({settings.sizeX, settings.sizeY, settings.sizeZ})),
     visited(xt::empty<bool>({settings.sizeX, settings.sizeY, settings.sizeZ})) {}
@@ -121,24 +120,98 @@ namespace Fission {
       + !state->in_bounds(x, y, z + 1);
   }
 
+  bool Evaluator::validateTile(int tile, int x, int y, int z) const {
+    switch (tile) {
+      case Cell:
+        return isTileSafe(tile, x, y, z);
+      case Casing:
+        return !state->in_bounds(x, y, z);
+      default:
+        return isActiveSafe(tile, x, y, z);
+    }
+  }
+
+  int Evaluator::validateNeighbors(int tile, int x, int y, int z) const {
+    switch (tile) {
+      case Cell:
+        return countNeighbors(tile, x, y, z);
+      case Casing:
+        return countCasingNeighbors(x, y, z);
+      default:
+        return countActiveNeighbors(tile, x, y, z);
+    }
+  }
+ 
+  bool Evaluator::parseRule(int rule, int x, int y, int z) const {
+    int tile = rule & 255;
+    int num = (rule >> 8) & 7;
+    int checkType = rule >> 11;
+
+    if (checkType >= 0 && checkType <= 2) {
+      int neighbors = validateNeighbors(tile, x, y, z);
+      switch (checkType) {
+        case 0: return neighbors >= num;  // At Least
+        case 1: return neighbors == num;  // Equal To
+        case 2: return neighbors < num;   // Less Than
+      }
+    }
+
+    if (checkType == 3) {  // In Between
+      return (validateTile(tile, x - 1, y, z) && validateTile(tile, x + 1, y, z)) ||
+            (validateTile(tile, x, y - 1, z) && validateTile(tile, x, y + 1, z)) ||
+            (validateTile(tile, x, y, z - 1) && validateTile(tile, x, y, z + 1));
+    }
+
+    // Sharing vertex/edge
+    int initial = validateTile(tile, x, y - 1, z) || validateTile(tile, x, y + 1, z);
+    int dir[4][2] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
+    int matches[4] = {};
+    for (int i = 0; i < 4; i++) {
+      if (validateTile(tile, x + dir[i][0], y, z + dir[i][1])) {
+        if (1 + initial >= num) return true;
+        matches[i] = 1;
+      }
+    }
+    for (int k = 0; k < 4; k++) {
+      if (matches[k] + matches[(k + 1) % 4] + initial >= num) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   void Evaluator::run(const xt::xtensor<int, 3> &state, Evaluation &result) {
     result.invalidTiles.clear();
+    for (auto &tiles: result.cachedTilePos) { tiles.clear(); }
     result.cellsHeatMult = 0;
     result.cellsEnergyMult = 0;
     result.fuelCellMultiplier = 0;
     result.moderatorCellMultiplier = 0;
     result.cooling = 0.0;
     result.breed = 0; // Number of Cells
-    isActive.fill(false);
+    isActive.fill(true);
     isModeratorInLine.fill(false);
     this->state = &state;
+    auto &grid = *this->state;
+
     for (int x{}; x < settings.sizeX; ++x) {
       for (int y{}; y < settings.sizeY; ++y) {
         for (int z{}; z < settings.sizeZ; ++z) {
-          int tile((*this->state)(x, y, z));
-          if (tile == Cell) {
+          int tile(grid(x, y, z)); 
+          if (tile < Cell) {
+            result.cachedTilePos[tile < Active ? tile : tile - Active].emplace_back(x, y, z);
+          } else {
+            isActive(x, y, z) = false;
+          }
+        }
+      }
+    }
+
+    for (int x{}; x < settings.sizeX; ++x) {
+      for (int y{}; y < settings.sizeY; ++y) {
+        for (int z{}; z < settings.sizeZ; ++z) {
+          if (grid(x, y, z) == Cell) {
             int adjFuelCells(countAdjFuelCells(x, y, z));
-            rules(x, y, z) = -1;
             ++result.breed;
             if (settings.altCalc) {
               result.cellsHeatMult += ((adjFuelCells + 1) * (adjFuelCells + 2)) / 2;
@@ -147,201 +220,43 @@ namespace Fission {
               result.fuelCellMultiplier += adjFuelCells * 3;
             }
             result.moderatorCellMultiplier += countActiveNeighbors(Moderator, x, y, z) * (adjFuelCells + 1);
-          } else {
-            if (tile < Active) {
-              rules(x, y, z) = tile;
-            } else if (tile < Cell) {
-              rules(x, y, z) = tile - Active;
-            } else {
-              rules(x, y, z) = -1;
-            }
-          }
-        }
-      }
-    }
-
-    for (int x{}; x < settings.sizeX; ++x) {
-      for (int y{}; y < settings.sizeY; ++y) {
-        for (int z{}; z < settings.sizeZ; ++z) {
-          if ((*this->state)(x, y, z) == Moderator) {
-            if (!isModeratorInLine(x, y, z)) {
-              result.invalidTiles.emplace_back(x, y, z);
-            }
-          } else switch (rules(x, y, z)) {
-            case Redstone:
-              isActive(x, y, z) = countNeighbors(Cell, x, y, z);
-              break;
-            case Lapis:
-              isActive(x, y, z) = countNeighbors(Cell, x, y, z)
-                && countCasingNeighbors(x, y, z);
-              break;
-            case Enderium:
-              isActive(x, y, z) = countCasingNeighbors(x, y, z) == 3
-                && (!x || x == settings.sizeX - 1)
-                && (!y || y == settings.sizeY - 1)
-                && (!z || z == settings.sizeZ - 1);
-              break;
-            case Cryotheum:
-              isActive(x, y, z) = countNeighbors(Cell, x, y, z) >= 2;
-              break;
-            case Manganese:
-              isActive(x, y, z) = countNeighbors(Cell, x, y, z) >= 2;
           }
         }
       }
     }
     
-    for (int x{}; x < settings.sizeX; ++x) {
-      for (int y{}; y < settings.sizeY; ++y) {
-        for (int z{}; z < settings.sizeZ; ++z) {
-          switch (rules(x, y, z)) {
-            case Water:
-              isActive(x, y, z) = countNeighbors(Cell, x, y, z)
-                || countActiveNeighbors(Moderator, x, y, z);
-              break;
-            case Quartz:
-              isActive(x, y, z) = countActiveNeighbors(Moderator, x, y, z);
-              break;
-            case Glowstone:
-              isActive(x, y, z) = countActiveNeighbors(Moderator, x, y, z) >= 2;
-              break;
-            case Helium:
-              isActive(x, y, z) = countActiveNeighbors(Redstone, x, y, z) == 1
-                && countCasingNeighbors(x, y, z);
-              break;
-            case Emerald:
-              isActive(x, y, z) = countActiveNeighbors(Moderator, x, y, z)
-                && countNeighbors(Cell, x, y, z);
-              break;
-            case Tin:
-              isActive(x, y, z) =
-                isActiveSafe(Lapis, x - 1, y, z) &&
-                isActiveSafe(Lapis, x + 1, y, z) ||
-                isActiveSafe(Lapis, x, y - 1, z) &&
-                isActiveSafe(Lapis, x, y + 1, z) ||
-                isActiveSafe(Lapis, x, y, z - 1) &&
-                isActiveSafe(Lapis, x, y, z + 1);
-              break;
-            case Magnesium:
-              isActive(x, y, z) = countActiveNeighbors(Moderator, x, y, z)
-                && countCasingNeighbors(x, y, z);
-              break;
-            case EndStone:
-              isActive(x, y, z) = countActiveNeighbors(Enderium, x, y, z);
-              break;
-            case Arsenic:
-              isActive(x, y, z) = countActiveNeighbors(Moderator, x, y, z) >= 3;
-          }
-        }
+    for (int tile: settings.schedule) {
+      if (tile == -1) {
+        break;
       }
-    }
-    
-    for (int x{}; x < settings.sizeX; ++x) {
-      for (int y{}; y < settings.sizeY; ++y) {
-        for (int z{}; z < settings.sizeZ; ++z) {
-          switch (rules(x, y, z)) {
-            case Gold:
-              isActive(x, y, z) = countActiveNeighbors(Water, x, y, z)
-                && countActiveNeighbors(Redstone, x, y, z);
+      for (auto &[x, y, z]: result.cachedTilePos[tile]) {
+        const std::vector<std::vector<int>> &rulesAnd = settings.rules[tile];
+        int andCount = 0;
+        for (auto &rulesOr: rulesAnd) {
+          for (auto &rule: rulesOr) {
+            if (parseRule(rule, x, y, z)) {
+              andCount++;
               break;
-            case Diamond:
-              isActive(x, y, z) = countActiveNeighbors(Water, x, y, z)
-                && countActiveNeighbors(Quartz, x, y, z);
-              break;
-            case Copper:
-              isActive(x, y, z) = countActiveNeighbors(Glowstone, x, y, z);
-            case Prismarine:
-              isActive(x, y, z) = countActiveNeighbors(Water, x, y, z);
-              break;
-            case Obsidian:
-              isActive(x, y, z) =
-                isActiveSafe(Glowstone, x - 1, y, z) &&
-                isActiveSafe(Glowstone, x + 1, y, z) ||
-                isActiveSafe(Glowstone, x, y - 1, z) &&
-                isActiveSafe(Glowstone, x, y + 1, z) ||
-                isActiveSafe(Glowstone, x, y, z - 1) &&
-                isActiveSafe(Glowstone, x, y, z + 1);
-              break;
-            case Aluminium:
-              isActive(x, y, z) = countActiveNeighbors(Quartz, x, y, z)
-              && countActiveNeighbors(Lapis, x, y, z);
-              break;
-            case Villiaumite:
-              isActive(x, y, z) = countActiveNeighbors(EndStone, x, y, z)
-              && countActiveNeighbors(Redstone, x, y, z);
-              break;
-            case Boron:
-              isActive(x, y, z) = countActiveNeighbors(Quartz, x, y, z)
-              && (countCasingNeighbors(x, y, z) || countActiveNeighbors(Moderator, x, y, z));
-              break;
-            case Silver:
-              isActive(x, y, z) = countActiveNeighbors(Glowstone, x, y, z) >= 2
-              && countActiveNeighbors(Tin, x, y, z);
+            }
           }
         }
+        isActive(x, y, z) = andCount == rulesAnd.size();
       }
     }
 
     for (int x{}; x < settings.sizeX; ++x) {
       for (int y{}; y < settings.sizeY; ++y) {
         for (int z{}; z < settings.sizeZ; ++z) {
-          switch (rules(x, y, z)) {
-            case Iron:
-              isActive(x, y, z) = countActiveNeighbors(Gold, x, y, z);
-              break;
-            case Fluorite:
-              isActive(x, y, z) = countActiveNeighbors(Prismarine, x, y, z)
-              && countActiveNeighbors(Gold, x, y, z);
-              break;
-            case NetherBrick:
-              isActive(x, y, z) = countActiveNeighbors(Obsidian, x, y, z);
-          }
-        }
-      }
-    }
-
-    for (int x{}; x < settings.sizeX; ++x) {
-      for (int y{}; y < settings.sizeY; ++y) {
-        for (int z{}; z < settings.sizeZ; ++z) {
-          switch (rules(x, y, z)) {
-            case Lead:
-              isActive(x, y, z) = countActiveNeighbors(Iron, x, y, z);
-              break;
-            case Purpur:
-              isActive(x, y, z) = countActiveNeighbors(Iron, x, y, z)
-              && countCasingNeighbors(x, y, z);
-          }
-        }
-      }
-    }
-
-    for (int x{}; x < settings.sizeX; ++x) {
-      for (int y{}; y < settings.sizeY; ++y) {
-        for (int z{}; z < settings.sizeZ; ++z) {
-          int tile((*this->state)(x, y, z));
+          int tile(grid(x, y, z));
           if (tile < Cell) {
-            switch (rules(x, y, z)) {
-              case Slime:
-                isActive(x, y, z) = countActiveNeighbors(Water, x, y, z)
-                && countActiveNeighbors(Lead, x, y, z);
-                break;
-              case Lithium:
-                isActive(x, y, z) =
-                isActiveSafe(Lead, x - 1, y, z) &&
-                isActiveSafe(Lead, x + 1, y, z) ||
-                isActiveSafe(Lead, x, y - 1, z) &&
-                isActiveSafe(Lead, x, y + 1, z) ||
-                isActiveSafe(Lead, x, y, z - 1) &&
-                isActiveSafe(Lead, x, y, z + 1);
-                break;
-              case Nitrogen:
-                isActive(x, y, z) = countActiveNeighbors(Purpur, x, y, z)
-                && countActiveNeighbors(Copper, x, y, z);
-            }
             if (isActive(x, y, z))
               result.cooling += settings.coolingRates[tile];
             else
               result.invalidTiles.emplace_back(x, y, z);
+          } else if (tile == Moderator) {
+            if (!isModeratorInLine(x, y, z)) {
+              result.invalidTiles.emplace_back(x, y, z);
+            }
           }
         }
       }

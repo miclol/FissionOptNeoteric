@@ -9,6 +9,27 @@ static void setRate(Fission::Settings &x, int index, double rate) {
   x.coolingRates[index] = rate;
 }
 
+static void clearSchedule(Fission::Settings &x) {
+  std::fill_n(x.schedule, sizeof(x.schedule) / sizeof(x.schedule[0]), 0);
+}
+
+static void setSchedule(Fission::Settings &x, int index, int heatSinkType) {
+  x.schedule[index] = heatSinkType;
+}
+
+static void clearRules(Fission::Settings &x) {
+  for (auto &rule: x.rules) {
+    rule.clear();
+  }
+}
+
+static void setRule(Fission::Settings &x, int hsIndex, int ruleIndex, int rule) {
+  if (ruleIndex >= x.rules[hsIndex].size()) {
+    x.rules[hsIndex].resize(ruleIndex + 1);
+  }
+  x.rules[hsIndex][ruleIndex].emplace_back(rule);
+}
+
 static emscripten::val getData(const Fission::Sample &x) {
   return emscripten::val(emscripten::typed_memory_view(x.state.size(), x.state.data()));
 }
@@ -68,6 +89,10 @@ EMSCRIPTEN_BINDINGS(FissionOpt) {
     .property("fuelBaseHeat", &Fission::Settings::fuelBaseHeat)
     .function("setLimit", &setLimit)
     .function("setRate", &setRate)
+    .function("clearSchedule", &clearSchedule)
+    .function("setSchedule", &setSchedule)
+    .function("clearRules", &clearRules)
+    .function("setRule", &setRule)
     .property("ensureHeatNeutral", &Fission::Settings::ensureHeatNeutral)
     .property("goal", &Fission::Settings::goal)
     .property("symX", &Fission::Settings::symX)

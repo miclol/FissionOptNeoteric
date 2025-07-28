@@ -50,7 +50,7 @@ input {
   overflow-x: auto;
 }
 
-#blockType>:not(:first-child) {
+.blockType>:not(:first-child) {
   font-family: monospace;
   font-weight: bold;
   font-size: 135%;
@@ -94,6 +94,18 @@ input {
 .air {color: white;}
 .cell {color: gray;}
 .mod {color: black;}
+.case {color: slategray;}
+
+#rules > td > div {
+  width: 10ch;
+  overflow-x: auto;
+  border: 1px solid #999;
+  border-radius: 2px;
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 120%;
+  color: #555;
+}
 
 #temperature {
   width: 4.5ch;
