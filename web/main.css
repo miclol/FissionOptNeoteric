@@ -33,6 +33,10 @@ input {
   margin-top: 0.5em;
 }
 
+#settings>.heading {
+  margin-top: 1.5em;
+}
+
 .disabledLink {
   color: gray;
   cursor: not-allowed;
