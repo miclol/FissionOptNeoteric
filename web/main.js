@@ -112,7 +112,6 @@ $(() => { FissionOpt().then((FissionOpt) => {
   $('#removeVilliaumite').click(() => { rates[22].val(0); rates[53].val(0); limits[22].val(0); limits[53].val(0); });
   $('#temperatureList').on('change', function() {$('#temperature').val(this.value)});
   const setConfig = (altCalc, genMult, heatMult, modFEMult, modHeatMult, FEGenMult, activeHeatsinkPrime) => {
-    console.log("Hi!");
     $("#altCalc").prop("checked", altCalc);
     $("#genMult").val(genMult);
     $("#heatMult").val(heatMult);
